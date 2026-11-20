@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "node scripts/build-pages.mjs",
-    "dev": "npm run build && node --env-file=.env server.js",
+    "dev": "npm run build && node --env-file-if-exists=.env server.js",
     "start": "node server.js",
     "seed": "node --env-file=.env scripts/seed.js",
     "check": "node scripts/check-project.mjs"
