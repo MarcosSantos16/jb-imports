@@ -71,22 +71,24 @@
   text-decoration: none;
   transition: color var(--dur) var(--ease-out);
 }
-/* Sublinhado neon que cresce no hover */
-.site-nav a::after {
-  content: "";
+/* Indicador neon que desliza entre os itens (posicionado por js/fx.js) */
+.site-nav__list { position: relative; }
+.nav-pill {
   position: absolute;
   left: 0;
-  right: 0;
-  bottom: 2px;
-  height: 2px;
-  background: var(--accent);
+  top: 50%;
+  height: 2.25rem;
+  margin-top: -1.125rem;
+  border-radius: var(--r-pill);
+  background: rgb(118 255 3 / 0.1);
+  border: 1px solid rgb(118 255 3 / 0.4);
   box-shadow: var(--glow-sm);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s var(--ease-out);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.45s var(--ease-out), width 0.45s var(--ease-out), opacity 0.2s;
 }
-.site-nav a:hover { color: var(--text); }
-.site-nav a:hover::after { transform: scaleX(1); }
+.site-nav a { position: relative; z-index: 1; }
+.site-nav a:hover { color: var(--accent); }
 
 .site-header__actions { margin-left: auto; display: flex; align-items: center; gap: var(--s2); }
 

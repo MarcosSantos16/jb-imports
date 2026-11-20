@@ -270,3 +270,20 @@ textarea.input { resize: vertical; min-height: 6rem; }
   border-bottom: 1px dashed var(--warn);
   font-weight: 600;
 }
+
+/* Interacoes: ondulacao ao clicar e deslocamento magnetico (js/fx.js) */
+.btn, .icon-btn, .chip { overflow: hidden; transition: translate 0.35s var(--ease-out), background-color var(--dur) var(--ease-out), color var(--dur), border-color var(--dur), box-shadow var(--dur) var(--ease-out), transform 0.15s var(--ease-out); }
+.ripple {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.55);
+  pointer-events: none;
+  animation: ripple-out 0.6s var(--ease-out) forwards;
+}
+.btn--primary .ripple { background: rgb(0 0 0 / 0.25); }
+@keyframes ripple-out {
+  to { transform: scale(22); opacity: 0; }
+}

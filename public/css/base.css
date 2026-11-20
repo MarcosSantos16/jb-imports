@@ -103,3 +103,14 @@ h1, h2, h3, h4 {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-control); border-radius: var(--r-pill); }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Grade de pontos animada ao fundo (desenhada por js/fx.js) */
+.fx-dots {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+main, .site-footer { position: relative; z-index: 1; }
