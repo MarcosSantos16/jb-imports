@@ -11,7 +11,7 @@ export const FIREBASE_CONFIG = {
   projectId: "jb-imports-b7c96",
   appId: "1:1042733273937:web:68f15db75b3456a8003970",
   storageBucket: "jb-imports-b7c96.firebasestorage.app",
-  messagingSenderId: "1042733273937"
+  messagingSenderId: "1042733273937",
 };
 
 // ID de medicao do Google Analytics 4 (formato G-XXXXXXXXXX).

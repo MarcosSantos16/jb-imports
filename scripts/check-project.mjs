@@ -8,13 +8,11 @@
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
-import { fileURLToPath } from 'url';
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
+const ROOT = new URL('..', import.meta.url).pathname;
 const erros = [];
 const avisos = [];
 let ok = 0;
-
 
 function pass(msg) { console.log(`  OK  ${msg}`); ok++; }
 function fail(msg) { console.error(`  FALHA  ${msg}`); erros.push(msg); }
