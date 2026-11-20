@@ -1,0 +1,145 @@
+<!--meta {"out":"index.html","title":"JB Imports | iPhones, peças e acessórios em Boa Viagem, Recife","description":"Loja de eletrônicos e produtos Apple em Boa Viagem, Recife. iPhones novos e seminovos, displays, baterias, cabos, fontes e fones, com procedência declarada e estoque em tempo real.","header":"header-cart","extra":"dialogs","css":["/css/store.css"],"scripts":["/js/consent.js","/js/main.js"]} -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <h1 id="hero-title" class="hero__title">Apple, peças e acessórios com procedência declarada.</h1>
+      <p class="hero__lead">Loja em Boa Viagem, Recife. Cada item mostra condição, garantia e estoque atualizado em tempo real.</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#catalogo">Ver catálogo</a>
+        <a class="btn btn--secondary" href="https://wa.me/5581984543444" target="_blank" rel="noopener">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp"/></svg><span>Falar no WhatsApp</span>
+        </a>
+      </div>
+    </div>
+
+    <section class="live-panel" aria-labelledby="live-title">
+      <div class="live-panel__head">
+        <h2 id="live-title" class="live-panel__title">Estoque agora</h2>
+        <p class="live-panel__time"><span class="live-dot" aria-hidden="true"></span><span id="live-status">Conectando</span></p>
+      </div>
+      <ul id="live-list" class="live-list"></ul>
+      <p class="live-panel__note">Unidades disponíveis por categoria. O painel muda sozinho quando o estoque é alterado.</p>
+    </section>
+  </div>
+</section>
+
+<section id="catalogo" class="section" aria-labelledby="catalogo-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 id="catalogo-title" class="section__title">Catálogo</h2>
+      <p class="section__lead">Preços finais em reais. A situação de cada item muda sozinha quando o estoque é atualizado.</p>
+    </div>
+
+    <div class="toolbar">
+      <div id="category-filters" class="toolbar__filters" role="group" aria-label="Filtrar por categoria"></div>
+      <div class="toolbar__controls">
+        <div class="field field--inline">
+          <label for="condition-filter">Condição</label>
+          <select id="condition-filter" class="input">
+            <option value="todos">Todas</option>
+            <option value="novo">Novo</option>
+            <option value="seminovo">Seminovo</option>
+            <option value="reposicao">Peça de reposição</option>
+          </select>
+        </div>
+        <div class="field field--inline">
+          <label for="search">Buscar</label>
+          <input id="search" class="input" type="search" autocomplete="off" placeholder="Modelo ou peça">
+        </div>
+      </div>
+    </div>
+
+    <p id="result-count" class="result-count"></p>
+    <div id="product-grid" class="product-grid"></div>
+    <div id="catalog-empty" class="empty">Carregando catálogo...</div>
+  </div>
+</section>
+
+<section id="como-comprar" class="section section--raised" aria-labelledby="como-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 id="como-title" class="section__title">Como comprar</h2>
+      <p class="section__lead">A compra fecha no WhatsApp. O site reserva as unidades para você.</p>
+    </div>
+    <ol class="steps">
+      <li class="steps__item">
+        <h3 class="steps__title">Escolha os itens</h3>
+        <p>Veja condição, procedência e garantia de cada produto antes de adicionar ao carrinho.</p>
+      </li>
+      <li class="steps__item">
+        <h3 class="steps__title">Reserve pelo site</h3>
+        <p>Informe nome e WhatsApp. As unidades ficam separadas e o estoque é atualizado na hora para todos os visitantes.</p>
+      </li>
+      <li class="steps__item">
+        <h3 class="steps__title">Confirme no WhatsApp</h3>
+        <p>Você recebe o resumo do pedido na conversa. Forma de pagamento, frete (se houver) e prazo de entrega ou retirada são combinados antes de qualquer cobrança.</p>
+      </li>
+    </ol>
+    <p class="section__note">Compras feitas fora da loja física têm direito de arrependimento em 7 dias. Veja <a href="/reembolso.html">Reembolso e Garantia</a>.</p>
+  </div>
+</section>
+
+<section id="procedencia" class="section" aria-labelledby="proc-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 id="proc-title" class="section__title">Condição e procedência dos itens</h2>
+      <p class="section__lead">Cada anúncio informa estes dois dados. Nada é vendido como original sem ser.</p>
+    </div>
+    <dl class="defs">
+      <div class="defs__item"><dt>Novo</dt><dd>Item sem uso anterior.</dd></div>
+      <div class="defs__item"><dt>Seminovo</dt><dd>Aparelho já utilizado. Estado de conservação e saúde da bateria são descritos no anúncio de cada unidade.</dd></div>
+      <div class="defs__item"><dt>Peça de reposição</dt><dd>Componente para reparo, como display ou bateria, vendido separadamente. A instalação não está inclusa, salvo se informado.</dd></div>
+      <div class="defs__item"><dt>Original do fabricante</dt><dd>Item produzido ou autorizado pelo fabricante da marca indicada.</dd></div>
+      <div class="defs__item"><dt>Compatível (não original)</dt><dd>Fabricado por terceiros para funcionar com o modelo indicado. Não é produto original da Apple e é identificado como tal.</dd></div>
+      <div class="defs__item"><dt>Peça retirada de aparelho</dt><dd>Componente removido de outro aparelho, já usado.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="contato" class="section section--raised" aria-labelledby="contato-title">
+  <div class="container contact">
+    <div class="contact__form">
+      <div class="section__head">
+        <h2 id="contato-title" class="section__title">Procura outro item?</h2>
+        <p class="section__lead">Conte o que você precisa e continue a conversa no WhatsApp. Este formulário apenas monta a mensagem: nada é salvo em nossos servidores.</p>
+      </div>
+      <form id="contact-form" novalidate>
+        <div class="field">
+          <label for="contact-name">Nome</label>
+          <input id="contact-name" class="input" type="text" autocomplete="name" maxlength="80" aria-describedby="contact-name-error" aria-invalid="false" required>
+          <p id="contact-name-error" class="field__error"></p>
+        </div>
+        <div class="field">
+          <label for="contact-phone">WhatsApp com DDD</label>
+          <input id="contact-phone" class="input" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="81 98454-3444" maxlength="20" aria-describedby="contact-phone-error" aria-invalid="false" required>
+          <p id="contact-phone-error" class="field__error"></p>
+        </div>
+        <div class="field">
+          <label for="contact-item">Item desejado</label>
+          <textarea id="contact-item" class="input" rows="3" maxlength="300" placeholder="Exemplo: tela para o modelo que você tem, ou o iPhone que procura" aria-describedby="contact-item-error" aria-invalid="false" required></textarea>
+          <p id="contact-item-error" class="field__error"></p>
+        </div>
+        <div class="field">
+          <div class="check">
+            <input id="contact-consent" type="checkbox" aria-describedby="contact-consent-error" aria-invalid="false">
+            <label for="contact-consent">Li e concordo com a <a href="/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>. Autorizo o uso dos dados informados apenas para montar esta mensagem de atendimento.</label>
+          </div>
+          <p id="contact-consent-error" class="field__error"></p>
+        </div>
+        <button type="submit" class="btn btn--primary">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp"/></svg><span>Continuar no WhatsApp</span>
+        </button>
+        <p id="contact-status" class="form-note" role="status"></p>
+      </form>
+    </div>
+
+    <aside class="contact__info" aria-labelledby="atendimento-title">
+      <h3 id="atendimento-title" class="contact__title">Atendimento</h3>
+      <ul class="info-list">
+        <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-pin"/></svg><span>Boa Viagem, Recife - PE</span></li>
+        <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp"/></svg><a href="https://wa.me/5581984543444" target="_blank" rel="noopener">+55 81 98454-3444</a></li>
+        <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-shield"/></svg><a href="/privacidade.html#direitos">Seus dados e o Encarregado (DPO)</a></li>
+      </ul>
+    </aside>
+  </div>
+</section>

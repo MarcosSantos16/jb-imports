@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// Regras do Cloud Firestore (plano Spark).
+// Principio: o navegador so LE o catalogo publico. Toda escrita (produtos,
+// estoque, pedidos) passa pela API Node.js, que usa o Admin SDK e ignora
+// estas regras depois de validar os dados e a autenticacao.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Visitantes leem apenas produtos ativos (a consulta da loja filtra ativo == true).
+    // Administradores leem todos, inclusive os inativos.
+    match /produtos/{produtoId} {
+      allow read: if resource.data.ativo == true || isAdmin();
+      allow write: if false;
+    }
+
+    match /categorias/{categoriaId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /configuracoes/{configId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Pedidos contem dados pessoais: nenhum acesso direto pelo navegador.
+    match /pedidos/{pedidoId} {
+      allow read, write: if false;
+    }
+
+    // Lista de administradores. Cada pessoa le apenas o proprio documento.
+    // Os documentos sao criados manualmente no Console do Firebase.
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+  }
+}

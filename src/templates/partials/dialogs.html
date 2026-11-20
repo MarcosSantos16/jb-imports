@@ -1,0 +1,64 @@
+<dialog id="cart-dialog" class="drawer" aria-labelledby="cart-title">
+  <div class="drawer__panel">
+    <div class="drawer__head">
+      <h2 id="cart-title" class="drawer__title">Carrinho</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Fechar carrinho">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer__body">
+      <section id="cart-view-list" aria-label="Itens do carrinho">
+        <p id="cart-notice" class="notice" role="status" hidden></p>
+        <ul id="cart-lines" class="cart-lines"></ul>
+        <p id="cart-empty" class="empty empty--flat">Seu carrinho está vazio. Escolha produtos no catálogo para começar.</p>
+      </section>
+
+      <form id="checkout-form" novalidate hidden>
+        <p id="checkout-summary" class="notice notice--info"></p>
+        <p class="form-note">Pedimos só o necessário para reservar e atender seu pedido: nome e WhatsApp. Frete, forma de pagamento e prazo são combinados no WhatsApp antes de qualquer cobrança.</p>
+
+        <div class="field">
+          <label for="checkout-name">Nome</label>
+          <input id="checkout-name" class="input" type="text" autocomplete="name" maxlength="80" aria-describedby="checkout-name-error" aria-invalid="false" required>
+          <p id="checkout-name-error" class="field__error"></p>
+        </div>
+        <div class="field">
+          <label for="checkout-phone">WhatsApp com DDD</label>
+          <input id="checkout-phone" class="input" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="81 98454-3444" maxlength="20" aria-describedby="checkout-phone-error" aria-invalid="false" required>
+          <p id="checkout-phone-error" class="field__error"></p>
+        </div>
+        <div class="field field--trap" aria-hidden="true">
+          <label for="checkout-website">Não preencha este campo</label>
+          <input id="checkout-website" class="input" type="text" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        <div class="field">
+          <div class="check">
+            <input id="checkout-consent" type="checkbox" aria-describedby="checkout-consent-error" aria-invalid="false">
+            <label for="checkout-consent">Li e concordo com a <a href="/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>. Autorizo o uso do meu nome e WhatsApp apenas para registrar e atender este pedido.</label>
+          </div>
+          <p id="checkout-consent-error" class="field__error"></p>
+        </div>
+
+        <p id="checkout-error" class="notice notice--error" role="alert" tabindex="-1" hidden></p>
+        <div class="form-actions">
+          <button type="submit" id="checkout-submit" class="btn btn--primary btn--block">Reservar e enviar pelo WhatsApp</button>
+          <button type="button" id="checkout-back" class="btn btn--secondary btn--block">Voltar ao carrinho</button>
+        </div>
+      </form>
+
+      <section id="cart-view-done" aria-label="Pedido enviado" hidden>
+        <p class="notice notice--ok" role="status">Pedido <strong id="done-number"></strong> reservado. As unidades ficaram separadas para você.</p>
+        <p>Abrimos o WhatsApp com o resumo do pedido. Se ele não abriu, use o botão abaixo para enviar a mensagem.</p>
+        <p><a id="done-link" class="btn btn--primary" href="https://wa.me/5581984543444" target="_blank" rel="noopener">Abrir o WhatsApp</a></p>
+        <p><button type="button" class="btn btn--secondary" data-close>Fechar</button></p>
+      </section>
+    </div>
+
+    <div id="cart-foot" class="drawer__foot">
+      <dl class="totals"><dt>Subtotal</dt><dd id="cart-subtotal">R$ 0,00</dd></dl>
+      <p class="form-note">Preço final em reais. Frete, quando houver, é informado antes da confirmação da compra.</p>
+      <button type="button" id="cart-checkout" class="btn btn--primary btn--block" disabled>Continuar</button>
+    </div>
+  </div>
+</dialog>

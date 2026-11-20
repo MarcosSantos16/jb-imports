@@ -1,0 +1,176 @@
+<!--meta {"out":"admin/index.html","title":"Painel administrativo | JB Imports","description":"Área restrita da equipe da JB Imports.","robots":"noindex,nofollow","header":"header-admin","css":["/css/admin.css"],"scripts":["/js/admin/admin.js"]} -->
+<div class="container admin">
+
+  <section id="login-view" class="auth-card" aria-labelledby="login-title">
+    <h1 id="login-title" class="auth-card__title">Entrar no painel</h1>
+    <p class="form-note">Acesso restrito à equipe da JB Imports.</p>
+    <form id="login-form" novalidate>
+      <div class="field">
+        <label for="login-email">E-mail</label>
+        <input id="login-email" class="input" type="email" autocomplete="username" aria-describedby="login-email-error" aria-invalid="false" required>
+        <p id="login-email-error" class="field__error"></p>
+      </div>
+      <div class="field">
+        <label for="login-password">Senha</label>
+        <input id="login-password" class="input" type="password" autocomplete="current-password" aria-describedby="login-password-error" aria-invalid="false" required>
+        <p id="login-password-error" class="field__error"></p>
+      </div>
+      <div class="field">
+        <div class="check">
+          <input id="login-consent" type="checkbox" aria-describedby="login-consent-error" aria-invalid="false">
+          <label for="login-consent">Estou ciente da <a href="/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>. Meu e-mail e senha são usados apenas para autenticar o acesso a este painel.</label>
+        </div>
+        <p id="login-consent-error" class="field__error"></p>
+      </div>
+      <p id="login-error" class="notice notice--error" role="alert" tabindex="-1" hidden></p>
+      <button type="submit" id="login-submit" class="btn btn--primary btn--block">Entrar</button>
+    </form>
+  </section>
+
+  <section id="panel-view" aria-labelledby="panel-title" hidden>
+    <div class="admin__bar">
+      <div>
+        <h1 id="panel-title" class="admin__title">Painel</h1>
+        <p id="admin-user" class="form-note"></p>
+      </div>
+      <div class="tabs" role="group" aria-label="Seções do painel">
+        <button type="button" id="tab-products" class="chip" aria-pressed="true">Produtos</button>
+        <button type="button" id="tab-orders" class="chip" aria-pressed="false">Pedidos</button>
+      </div>
+    </div>
+
+    <p id="toast" class="notice" role="status" hidden></p>
+
+    <section id="products-view" aria-labelledby="products-title">
+      <div class="admin__toolbar">
+        <h2 id="products-title" class="admin__subtitle">Produtos <span id="products-count" class="admin__count"></span></h2>
+        <button type="button" id="new-product" class="btn btn--primary">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-plus"/></svg><span>Novo produto</span>
+        </button>
+      </div>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Lista de produtos">
+        <table class="table table--admin">
+          <caption class="sr-only">Produtos cadastrados com controle rápido de estoque</caption>
+          <thead>
+            <tr>
+              <th scope="col">Produto</th>
+              <th scope="col">Preço</th>
+              <th scope="col">Estoque</th>
+              <th scope="col">Situação</th>
+              <th scope="col">Visível na loja</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="products-body"></tbody>
+        </table>
+      </div>
+      <p id="products-empty" class="empty" hidden>Nenhum produto cadastrado. Use &ldquo;Novo produto&rdquo; para começar.</p>
+    </section>
+
+    <section id="orders-view" aria-labelledby="orders-title" hidden>
+      <div class="admin__toolbar">
+        <h2 id="orders-title" class="admin__subtitle">Pedidos recentes</h2>
+        <button type="button" id="refresh-orders" class="btn btn--secondary">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-refresh"/></svg><span>Atualizar</span>
+        </button>
+      </div>
+      <p class="form-note">Cancelar um pedido devolve as unidades ao estoque. Anonimizar remove nome e WhatsApp (pedido de exclusão de dados, LGPD).</p>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Lista de pedidos">
+        <table class="table table--admin">
+          <caption class="sr-only">Pedidos recentes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Pedido</th>
+              <th scope="col">Cliente</th>
+              <th scope="col">Itens</th>
+              <th scope="col">Subtotal</th>
+              <th scope="col">Situação</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body"></tbody>
+        </table>
+      </div>
+      <p id="orders-empty" class="empty" hidden>Nenhum pedido registrado ainda.</p>
+    </section>
+  </section>
+</div>
+
+<dialog id="product-dialog" class="modal" aria-labelledby="product-dialog-title">
+  <form id="product-form" class="modal__panel" novalidate>
+    <div class="drawer__head">
+      <h2 id="product-dialog-title" class="drawer__title">Novo produto</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Fechar formulário">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-close"/></svg>
+      </button>
+    </div>
+    <div class="modal__body">
+      <div class="field">
+        <label for="pf-nome">Nome</label>
+        <input id="pf-nome" class="input" type="text" maxlength="120" required>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="pf-categoria">Categoria</label>
+          <select id="pf-categoria" class="input"></select>
+        </div>
+        <div class="field">
+          <label for="pf-condicao">Condição</label>
+          <select id="pf-condicao" class="input">
+            <option value="novo">Novo</option>
+            <option value="seminovo">Seminovo</option>
+            <option value="reposicao">Peça de reposição</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="pf-procedencia">Procedência</label>
+        <select id="pf-procedencia" class="input" aria-describedby="pf-procedencia-help">
+          <option value="original">Original do fabricante</option>
+          <option value="compativel">Compatível (não original)</option>
+          <option value="retirada-usada">Peça retirada de aparelho (usada)</option>
+        </select>
+        <p id="pf-procedencia-help" class="field__help">Apareça como está: peças paralelas devem ser marcadas como compatíveis, nunca como originais.</p>
+      </div>
+      <div class="field">
+        <label for="pf-descricao">Descrição técnica detalhada</label>
+        <textarea id="pf-descricao" class="input" rows="5" maxlength="2000" required></textarea>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="pf-preco">Preço final (R$)</label>
+          <input id="pf-preco" class="input" type="text" inputmode="decimal" placeholder="1299,90" required>
+        </div>
+        <div class="field">
+          <label for="pf-estoque">Quantidade em estoque</label>
+          <input id="pf-estoque" class="input" type="number" min="0" max="9999" step="1" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="pf-garantia">Garantia adicional da loja (dias)</label>
+        <input id="pf-garantia" class="input" type="number" min="0" max="730" step="1" value="0" aria-describedby="pf-garantia-help">
+        <p id="pf-garantia-help" class="field__help">A garantia legal de 90 dias já é exibida automaticamente. Use 0 se não houver prazo extra.</p>
+      </div>
+      <div class="field">
+        <label for="pf-imagem">URL da imagem (https)</label>
+        <input id="pf-imagem" class="input" type="url" placeholder="https://res.cloudinary.com/..." aria-describedby="pf-imagem-help">
+        <p id="pf-imagem-help" class="field__help">Use o link direto de uma foto real da loja, por exemplo hospedada no Cloudinary (plano gratuito). Não use imagens do site da Apple.</p>
+      </div>
+      <div class="field">
+        <label for="pf-alt">Texto alternativo da imagem</label>
+        <input id="pf-alt" class="input" type="text" maxlength="160" aria-describedby="pf-alt-help">
+        <p id="pf-alt-help" class="field__help">Descreva a foto para quem usa leitor de tela. Se ficar vazio, o site usa o nome e a condição do produto.</p>
+      </div>
+      <div class="check">
+        <input id="pf-ativo" type="checkbox" checked>
+        <label for="pf-ativo">Visível na loja</label>
+      </div>
+      <p class="form-note">A situação (Em estoque, Últimas unidades ou Esgotado) é calculada automaticamente pela quantidade.</p>
+      <p id="pf-error" class="notice notice--error" role="alert" tabindex="-1" hidden></p>
+    </div>
+    <div class="modal__foot">
+      <button type="button" class="btn btn--secondary" data-close>Cancelar</button>
+      <button type="submit" id="pf-submit" class="btn btn--primary">Salvar produto</button>
+    </div>
+  </form>
+</dialog>

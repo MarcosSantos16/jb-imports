@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<meta name="robots" content="{{robots}}">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0a0a">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com; frame-src https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+{{cssLinks}}
+</head>
+<body class="{{bodyClass}}">
+<a class="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
+{{> cookie-banner}}
+{{> sprite}}
+{{@header}}
+<main id="conteudo" tabindex="-1">
+{{content}}
+</main>
+{{> footer}}
+{{@extra}}
+<div id="live-region" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+{{scriptTags}}
+</body>
+</html>

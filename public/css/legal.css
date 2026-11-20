@@ -1,0 +1,15 @@
+.prose { max-width: 52rem; padding-block: var(--s7) var(--s8); }
+.prose h1 { margin-bottom: var(--s3); font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem); font-weight: 400; letter-spacing: -0.025em; }
+.prose__meta { color: var(--text-3); font-size: 0.875rem; }
+.prose h2 { margin: var(--s7) 0 var(--s3); font-family: var(--font-display); font-size: 1.625rem; font-weight: 400; letter-spacing: -0.015em; }
+.prose h3 { margin: var(--s5) 0 var(--s2); font-size: 1.0625rem; font-weight: 600; }
+.prose p, .prose li { color: var(--text-2); max-width: 72ch; }
+.prose li { margin-bottom: var(--s2); }
+.prose strong { color: var(--text); }
+.prose code { padding: 1px 6px; background: var(--surface-raised); border-radius: var(--r-sm); font-family: var(--font-mono); font-size: 0.875em; }
+.prose .table th, .prose .table td { color: var(--text-2); }
+.prose .table-wrap { margin-block: var(--s4); }
+
+.toc { margin: var(--s5) 0; padding: var(--s4) var(--s5); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); }
+.toc ul { margin: 0; columns: 2 16rem; list-style: none; padding: 0; }
+.toc li { margin-bottom: var(--s2); }

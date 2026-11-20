@@ -1,0 +1,21 @@
+.admin { padding-block: var(--s6) var(--s8); }
+
+.auth-card { max-width: 28rem; margin: var(--s7) auto; padding: var(--s6); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-xl); }
+.auth-card__title { margin-bottom: var(--s2); font-family: var(--font-display); font-size: 2rem; font-weight: 400; letter-spacing: -0.02em; }
+
+.admin__bar { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--s4); margin-bottom: var(--s5); }
+.admin__title { font-family: var(--font-display); font-size: 2rem; font-weight: 400; letter-spacing: -0.02em; }
+.admin__bar .form-note { margin: var(--s1) 0 0; }
+.tabs { display: flex; gap: var(--s2); }
+
+.admin__toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s4); }
+.admin__subtitle { font-size: 1.25rem; font-weight: 600; }
+.admin__count { color: var(--text-3); font-weight: 400; }
+
+.table--admin th, .table--admin td { vertical-align: middle; }
+.table__name { min-width: 14rem; }
+.table__name strong { display: block; }
+.table__sub { display: block; color: var(--text-3); font-size: 0.8125rem; font-weight: 400; }
+.row-actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.plain-list { margin: 0; padding: 0; list-style: none; }
+.plain-list li { margin: 0; }

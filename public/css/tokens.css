@@ -1,0 +1,53 @@
+/* Tokens de design da JB Imports.
+   Todas as combinacoes texto/fundo foram validadas para WCAG AA (npm run check). */
+:root {
+  color-scheme: dark;
+
+  /* Superficies */
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface-raised: #1c1c1c;
+  --border: #262626;
+  --border-control: #7a7a7a;
+
+  /* Destaque: verde neon. Usado com economia: botao principal, foco, ponto "ao vivo" e marca. */
+  --accent: #76ff03;
+  --accent-strong: #9bff4d;
+  --accent-press: #64dd17;
+  --on-accent: #0a0a0a;
+  --glow: 0 0 0 1px rgb(118 255 3 / 0.35), 0 0 22px rgb(118 255 3 / 0.22);
+
+  /* Texto */
+  --text: #ffffff;
+  --text-2: #d1d5db;
+  --text-3: #a3a3a3;
+
+  /* Estados */
+  --warn: #fbbf24;
+  --danger: #ff8a80;
+
+  /* Raios hierarquicos: controles 8, cartoes 12, paineis grandes 16 */
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-pill: 999px;
+
+  /* Espacamento (base 4px) */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 80px;
+
+  /* Tipografia: pilhas de sistema (nenhuma fonte externa e nenhum dado enviado a terceiros).
+     Serifa no display, sans humanista no texto corrido. */
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --maxw: 1200px;
+}

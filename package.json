@@ -1,0 +1,20 @@
+{
+  "name": "jb-imports",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Loja virtual da JB Imports: Node.js + Express, Firebase (plano Spark) e front-end em JavaScript puro.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build-pages.mjs",
+    "dev": "npm run build && node --env-file=.env server.js",
+    "start": "node server.js",
+    "seed": "node --env-file=.env scripts/seed.js",
+    "check": "node scripts/check-project.mjs"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "firebase-admin": "^12.7.0"
+  }
+}
