@@ -14,7 +14,10 @@ async function requireAdmin(req, res, next) {
   try {
     decodificado = await auth().verifyIdToken(m[1]);
   } catch (e) {
-    throw new AppError(401, 'TOKEN_INVALIDO', 'Sessão expirada. Entre novamente.');
+    // Mostra o motivo real (projeto errado no .env, relogio do computador, token expirado...)
+    console.error('[auth] verifyIdToken falhou:', e.message);
+    throw new AppError(401, 'TOKEN_INVALIDO', 'Sessão expirada ou não validada pelo servidor.',
+      [`Motivo: ${e.message}`]);
   }
 
   const doc = await db().collection('admins').doc(decodificado.uid).get();
