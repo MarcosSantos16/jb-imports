@@ -88,7 +88,7 @@
   transition: transform 0.45s var(--ease-out), width 0.45s var(--ease-out), opacity 0.2s;
 }
 .site-nav a { position: relative; z-index: 1; }
-.site-nav a:hover { color: var(--accent); }
+.site-nav a:hover, .site-nav a[aria-current="true"] { color: var(--accent); }
 
 .site-header__actions { margin-left: auto; display: flex; align-items: center; gap: var(--s2); }
 
@@ -111,19 +111,6 @@
 }
 .section__lead { color: var(--text-2); max-width: 60ch; margin: 0; font-size: 1.0625rem; }
 .section__note { color: var(--text-2); margin: var(--s6) 0 0; }
-
-/* Revelacao ao rolar: so onde o navegador suporta scroll-driven animations */
-@supports (animation-timeline: view()) {
-  .reveal {
-    animation: reveal-up linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 28%;
-  }
-  @keyframes reveal-up {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: none; }
-  }
-}
 
 /* ---------- Rodape ---------- */
 .site-footer {

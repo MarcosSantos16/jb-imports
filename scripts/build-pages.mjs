@@ -50,7 +50,7 @@ for (const arquivo of readdirSync(join(modelos, 'pages'))) {
     bodyClass: meta.bodyClass,
     year: ano,
     content: fonte.slice(m[0].length),
-    cssLinks: [...CSS_BASE, ...meta.css].map((h) => `<link rel="stylesheet" href="${h}">`).join('\n'),
+    cssLinks: [...CSS_BASE, ...meta.css, '/css/motion.css'].map((h) => `<link rel="stylesheet" href="${h}">`).join('\n'),
     scriptTags: meta.scripts.map((s) => `<script type="module" src="${s}"></script>`).join('\n'),
   };
 

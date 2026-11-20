@@ -187,9 +187,78 @@ function iniciarRolagemECartoes() {
   }
 }
 
+
+// ---------- 5. Revelacao ao rolar e secao atual no menu ----------
+function iniciarRevelacao() {
+  if (reduzir.matches || !('IntersectionObserver' in window)) return;
+  document.documentElement.classList.add('js');
+
+  const observador = new IntersectionObserver((entradas) => {
+    for (const entrada of entradas) {
+      if (!entrada.isIntersecting) continue;
+      const el = entrada.target;
+      el.classList.add('is-visible');
+      observador.unobserve(el);
+      // Ao terminar, remove a classe: o elemento volta ao estado normal (hover etc.)
+      el.addEventListener('transitionend', (ev) => {
+        if (ev.propertyName === 'opacity') el.classList.remove('reveal', 'is-visible');
+      }, { once: true });
+    }
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+  function preparar(el) {
+    if (el.dataset.rev) return;
+    el.dataset.rev = '1';
+    // Escalonamento: irmaos da mesma grade entram um depois do outro
+    const pai = el.parentElement;
+    if (pai) {
+      const idx = Math.min([...pai.children].indexOf(el), 6);
+      if (idx > 0) el.style.setProperty('--d', `${idx * 70}ms`);
+    }
+    el.classList.add('reveal');
+    observador.observe(el);
+  }
+
+  document.querySelectorAll('.reveal').forEach(preparar);
+
+  // Cards de produto entram na tela quando sao renderizados pelo catalogo
+  new MutationObserver((mutacoes) => {
+    for (const m of mutacoes) {
+      for (const no of m.addedNodes) {
+        if (no.nodeType !== 1) continue;
+        if (no.matches('.product')) preparar(no);
+        no.querySelectorAll && no.querySelectorAll('.product').forEach(preparar);
+      }
+    }
+  }).observe(document.body, { childList: true, subtree: true });
+}
+
+function iniciarSecaoAtual() {
+  const links = [...document.querySelectorAll('.site-nav a[href*="#"]')];
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  const secoes = links
+    .map((a) => ({ a, el: document.getElementById(a.hash.slice(1)) }))
+    .filter((x) => x.el);
+
+  const observador = new IntersectionObserver((entradas) => {
+    for (const entrada of entradas) {
+      if (!entrada.isIntersecting) continue;
+      const alvo = secoes.find((x) => x.el === entrada.target);
+      if (!alvo) continue;
+      links.forEach((a) => a.removeAttribute('aria-current'));
+      alvo.a.setAttribute('aria-current', 'true');
+      alvo.a.dispatchEvent(new Event('pointerover', { bubbles: true }));
+    }
+  }, { rootMargin: '-45% 0px -50% 0px' });
+
+  secoes.forEach((x) => observador.observe(x.el));
+}
+
 // ---------- Inicializacao ----------
 const canvas = document.querySelector('.fx-dots');
 if (canvas) iniciarGradeDePontos(canvas);
 iniciarBotoes();
 iniciarNavegacao();
 iniciarRolagemECartoes();
+iniciarRevelacao();
+iniciarSecaoAtual();

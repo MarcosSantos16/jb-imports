@@ -164,9 +164,7 @@
 .steps { display: grid; gap: var(--s5); margin: 0; padding: 0; list-style: none; counter-reset: passo; }
 @media (min-width: 880px) { .steps { grid-template-columns: repeat(3, 1fr); } }
 .steps__item {
-  position: relative;
   padding: var(--s5);
-  padding-top: var(--s7);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-xl);
@@ -174,13 +172,14 @@
   transition: border-color var(--dur), box-shadow var(--dur);
 }
 .steps__item:hover { border-color: rgb(118 255 3 / 0.5); box-shadow: var(--glow-sm); }
+/* Numero no fluxo normal: nunca sobrepoe o titulo */
 .steps__item::before {
   content: counter(passo);
-  position: absolute;
-  top: var(--s4);
-  left: var(--s5);
+  display: block;
+  margin-bottom: var(--s3);
   font-size: 2rem;
   font-weight: 900;
+  line-height: 1;
   color: var(--accent);
   text-shadow: var(--glow-sm);
 }
