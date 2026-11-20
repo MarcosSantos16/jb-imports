@@ -55,6 +55,22 @@ function parsePreco(texto) {
 const centavosParaCampo = (c) => (c / 100).toFixed(2).replace('.', ',');
 
 // ---------- login ----------
+// Traduz o codigo do Firebase em uma causa concreta, para o administrador saber o que corrigir.
+function mensagemDeLogin(codigo) {
+  const mapa = {
+    'auth/operation-not-allowed': 'O login por e-mail e senha não está ativado. No Firebase, vá em Authentication > Sign-in method e ative "E-mail/senha".',
+    'auth/invalid-email': 'O formato do e-mail é inválido.',
+    'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos e tente de novo.',
+    'auth/network-request-failed': 'Sem conexão com o Firebase. Verifique a internet.',
+    'auth/user-disabled': 'Esta conta de acesso foi desativada no Firebase.',
+    'auth/invalid-api-key': 'A chave do Firebase em public/js/config.js está incorreta.',
+    'auth/user-not-found': 'Não existe conta com este e-mail no Firebase (Authentication > Users).',
+    'auth/wrong-password': 'Senha incorreta. Use "Redefinir senha" no Firebase se necessário.',
+    'auth/invalid-credential': 'E-mail ou senha incorretos, ou a conta não existe neste projeto Firebase.',
+  };
+  return mapa[codigo] || `Não foi possível entrar (${codigo || 'erro desconhecido'}).`;
+}
+
 function marcar(campo, msg) {
   campo.setAttribute('aria-invalid', msg ? 'true' : 'false');
   $(`${campo.id}-error`).textContent = msg || '';
@@ -86,10 +102,13 @@ async function aoMudarSessao(usuario) {
   try {
     await api('/me');
   } catch (e) {
+    const uid = usuario.uid;
     await authFns.signOut(auth);
     const erro = $('login-error');
     erro.hidden = false;
-    erro.textContent = e.message;
+    erro.textContent = /permiss/i.test(e.message)
+      ? `Conta entrou, mas não é administrador. No Firestore, crie o documento admins/${uid} com o campo ativo = true.`
+      : `${e.message} (Se o problema continuar, confira se o servidor está rodando com o .env preenchido.)`;
     erro.focus();
     return;
   }
@@ -121,9 +140,7 @@ $('login-form').addEventListener('submit', async (e) => {
   } catch (err) {
     const limite = err.code === 'auth/too-many-requests';
     erro.hidden = false;
-    erro.textContent = limite
-      ? 'Muitas tentativas. Aguarde alguns minutos e tente de novo.'
-      : 'E-mail ou senha incorretos.';
+    erro.textContent = mensagemDeLogin(err.code);
     erro.focus();
   } finally {
     $('login-submit').disabled = false;
