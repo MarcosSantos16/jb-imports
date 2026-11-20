@@ -109,20 +109,22 @@ function iniciarBotoes() {
       const alvo = e.target.closest && e.target.closest(SELETOR_MAGNETICO);
       if (!alvo || alvo.disabled) return;
       const r = alvo.getBoundingClientRect();
-      const dx = (e.clientX - (r.left + r.width / 2)) / r.width;
-      const dy = (e.clientY - (r.top + r.height / 2)) / r.height;
-      alvo.style.translate = `${(dx * 8).toFixed(2)}px ${(dy * 6).toFixed(2)}px`;
+      if (!r.width || !r.height) return;
+      const dx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
+      const dy = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2)));
+      alvo.style.translate = `${(dx * 3).toFixed(2)}px ${(dy * 2).toFixed(2)}px`;
     }, { passive: true });
 
     document.addEventListener('pointerout', (e) => {
       const alvo = e.target.closest && e.target.closest(SELETOR_MAGNETICO);
-      if (alvo) alvo.style.translate = '';
+      if (!alvo || (e.relatedTarget && alvo.contains(e.relatedTarget))) return;
+      alvo.style.translate = '';
     });
   }
 
   document.addEventListener('pointerdown', (e) => {
     const alvo = e.target.closest && e.target.closest('.btn');
-    if (!alvo || alvo.disabled || reduzir.matches) return;
+    if (!alvo || alvo.disabled || reduzir.matches || e.button !== 0) return;
     const r = alvo.getBoundingClientRect();
     const onda = document.createElement('span');
     onda.className = 'ripple';
