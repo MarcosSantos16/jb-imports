@@ -184,7 +184,7 @@ npm i -g vercel
 
 Opcao A — Via Git (recomendado):
 1. Faca push do projeto para o GitHub (crie um repo privado)
-2. Acesse https://vercel.com/new
+2. Acesse https://vercel.c om/new
 3. Importe o repositorio
 4. A Vercel detecta automaticamente as configuracoes do `vercel.json`
 
