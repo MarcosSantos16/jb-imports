@@ -151,11 +151,30 @@
         <input id="pf-garantia" class="input" type="number" min="0" max="730" step="1" value="0" aria-describedby="pf-garantia-help">
         <p id="pf-garantia-help" class="field__help">A garantia legal de 90 dias já é exibida automaticamente. Use 0 se não houver prazo extra.</p>
       </div>
-      <div class="field">
-        <label for="pf-imagem">URL da imagem (https)</label>
-        <input id="pf-imagem" class="input" type="url" placeholder="https://res.cloudinary.com/..." aria-describedby="pf-imagem-help">
-        <p id="pf-imagem-help" class="field__help">Use o link direto de uma foto real da loja, por exemplo hospedada no Cloudinary (plano gratuito). Não use imagens do site da Apple.</p>
-      </div>
+      <fieldset class="field imagem-campo">
+        <legend class="field__legend">Foto do produto</legend>
+        <div class="segmento" role="radiogroup" aria-label="Origem da foto">
+          <label class="segmento__opcao"><input type="radio" name="pf-origem" value="url" checked><span>Colar URL</span></label>
+          <label class="segmento__opcao"><input type="radio" name="pf-origem" value="arquivo"><span>Enviar do computador</span></label>
+        </div>
+
+        <div id="pf-origem-url" class="field">
+          <label for="pf-imagem">URL da imagem (https)</label>
+          <input id="pf-imagem" class="input" type="url" placeholder="https://res.cloudinary.com/..." aria-describedby="pf-imagem-help">
+          <p id="pf-imagem-help" class="field__help">Use o link direto de uma foto real da loja. Não use imagens do site da Apple.</p>
+        </div>
+
+        <div id="pf-origem-arquivo" class="field" hidden>
+          <label for="pf-arquivo" class="btn btn--secondary btn--sm arquivo-botao">Escolher foto (JPG, PNG ou WebP, até 8 MB)</label>
+          <input id="pf-arquivo" class="sr-only" type="file" accept="image/jpeg,image/png,image/webp">
+          <p id="pf-arquivo-status" class="field__help" role="status" aria-live="polite"></p>
+        </div>
+
+        <figure class="imagem-preview" id="pf-preview-box" hidden>
+          <img id="pf-preview" class="imagem-preview__img" alt="">
+          <figcaption class="field__help">Pré-visualização da foto</figcaption>
+        </figure>
+      </fieldset>
       <div class="field">
         <label for="pf-alt">Texto alternativo da imagem</label>
         <input id="pf-alt" class="input" type="text" maxlength="160" aria-describedby="pf-alt-help">

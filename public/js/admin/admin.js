@@ -6,6 +6,7 @@ import {
   CATEGORIAS, CONDICAO_LABEL, disponibilidade, formatBRL, categoriaNome,
 } from '../catalog.js';
 import { formatarTelefone } from '../whatsapp.js';
+import { CLOUDINARY } from '../config.js';
 
 const $ = (id) => document.getElementById(id);
 const DISP_TEXTO = { 'em-estoque': 'Em estoque', 'ultimas-unidades': 'Últimas unidades', esgotado: 'Esgotado' };
@@ -286,11 +287,114 @@ function abrirFormulario(id) {
   $('pf-garantia').value = p ? String(p.garantiaLojaDias || 0) : '0';
   $('pf-imagem').value = p ? p.imagemUrl || '' : '';
   $('pf-alt').value = p ? p.imagemAlt || '' : '';
+  $('pf-arquivo-status').textContent = '';
+  escolherOrigem('url');
+  mostrarPreview($('pf-imagem').value, $('pf-nome').value);
   $('pf-ativo').checked = p ? p.ativo === true : true;
   $('pf-error').hidden = true;
   dialogoProduto.showModal();
   $('pf-nome').focus();
 }
+
+
+// ---------- foto do produto: URL ou arquivo do computador ----------
+const LIMITE_FOTO = 8 * 1024 * 1024;
+let enviandoFoto = false;
+
+const cloudinaryConfigurado = () =>
+  !String(CLOUDINARY.cloudName).includes('PREENCHER') && !String(CLOUDINARY.uploadPreset).includes('PREENCHER');
+
+function mostrarPreview(url, nome) {
+  const caixa = $('pf-preview-box');
+  const img = $('pf-preview');
+  if (!url || !/^https:\/\//.test(url)) { caixa.hidden = true; img.removeAttribute('src'); return; }
+  img.onerror = () => { caixa.hidden = true; };
+  img.alt = nome ? `Foto de ${nome}` : 'Foto do produto';
+  img.src = url;
+  caixa.hidden = false;
+}
+
+function escolherOrigem(origem) {
+  const arquivo = origem === 'arquivo';
+  document.querySelectorAll('input[name="pf-origem"]').forEach((r) => { r.checked = r.value === origem; });
+  $('pf-origem-url').hidden = arquivo;
+  $('pf-origem-arquivo').hidden = !arquivo;
+}
+
+// Reduz a foto no navegador (lado maior ate 1200 px, WebP) antes do envio
+async function reduzirFoto(arquivo) {
+  const imagem = await createImageBitmap(arquivo);
+  const escala = Math.min(1, 1200 / Math.max(imagem.width, imagem.height));
+  const tela = document.createElement('canvas');
+  tela.width = Math.max(1, Math.round(imagem.width * escala));
+  tela.height = Math.max(1, Math.round(imagem.height * escala));
+  tela.getContext('2d').drawImage(imagem, 0, 0, tela.width, tela.height);
+  imagem.close && imagem.close();
+  return new Promise((ok, falha) => tela.toBlob(
+    (blob) => (blob ? ok(blob) : falha(new Error('Não foi possível processar a foto.'))),
+    'image/webp',
+    0.85,
+  ));
+}
+
+async function enviarParaCloudinary(blob, nomeOriginal) {
+  const dados = new FormData();
+  dados.append('file', blob, `${(nomeOriginal || 'foto').replace(/\.[^.]+$/, '')}.webp`);
+  dados.append('upload_preset', CLOUDINARY.uploadPreset);
+  const resp = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY.cloudName}/image/upload`, {
+    method: 'POST',
+    body: dados,
+  });
+  const resposta = await resp.json().catch(() => ({}));
+  if (!resp.ok || !resposta.secure_url) {
+    throw new Error((resposta.error && resposta.error.message) || 'Falha ao enviar a foto.');
+  }
+  return resposta.secure_url;
+}
+
+document.querySelectorAll('input[name="pf-origem"]').forEach((r) => {
+  r.addEventListener('change', () => escolherOrigem(r.value));
+});
+
+$('pf-imagem').addEventListener('input', () => mostrarPreview($('pf-imagem').value.trim(), $('pf-nome').value));
+
+$('pf-arquivo').addEventListener('change', async (e) => {
+  const entrada = e.target;
+  const arquivo = entrada.files && entrada.files[0];
+  const status = $('pf-arquivo-status');
+  if (!arquivo) return;
+  entrada.value = '';
+
+  if (!cloudinaryConfigurado()) {
+    status.textContent = 'Envio de fotos ainda não configurado. Preencha CLOUDINARY em public/js/config.js ou use a opção Colar URL.';
+    return;
+  }
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(arquivo.type)) {
+    status.textContent = 'Formato não aceito. Use JPG, PNG ou WebP.';
+    return;
+  }
+  if (arquivo.size > LIMITE_FOTO) {
+    status.textContent = 'Foto muito grande. O limite é 8 MB.';
+    return;
+  }
+
+  enviandoFoto = true;
+  $('pf-submit').disabled = true;
+  status.textContent = 'Enviando foto...';
+  try {
+    const blob = await reduzirFoto(arquivo);
+    const url = await enviarParaCloudinary(blob, arquivo.name);
+    $('pf-imagem').value = url;
+    mostrarPreview(url, $('pf-nome').value);
+    status.textContent = 'Foto enviada. Ela será salva ao confirmar o produto.';
+    announce('Foto enviada');
+  } catch (err) {
+    status.textContent = `Não foi possível enviar a foto: ${err.message}`;
+  } finally {
+    enviandoFoto = false;
+    $('pf-submit').disabled = false;
+  }
+});
 
 $('new-product').addEventListener('click', () => abrirFormulario(null));
 dialogoProduto.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => dialogoProduto.close()));
@@ -299,6 +403,13 @@ $('product-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const erro = $('pf-error');
   erro.hidden = true;
+
+  if (enviandoFoto) {
+    erro.hidden = false;
+    erro.textContent = 'Aguarde o envio da foto terminar antes de salvar.';
+    erro.focus();
+    return;
+  }
 
   const precoCentavos = parsePreco($('pf-preco').value);
   if (Number.isNaN(precoCentavos)) {

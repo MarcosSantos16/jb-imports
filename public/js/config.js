@@ -20,6 +20,14 @@ export const GA_MEASUREMENT_ID = 'G-PREENCHER';
 
 export const WHATSAPP_NUMBER = '5581984543444';
 
+// Upload de fotos pelo painel (Cloudinary, plano gratuito).
+// Crie um "upload preset" do tipo UNSIGNED em Settings > Upload > Upload presets.
+// O cloud name aparece no painel inicial do Cloudinary. Estes dois valores sao publicos.
+export const CLOUDINARY = {
+  cloudName: 'PREENCHER',
+  uploadPreset: 'PREENCHER',
+};
+
 // Versao do texto da Politica de Privacidade. Alterar reabre o banner de cookies.
 export const POLICY_VERSION = '2026-11-18';
 
