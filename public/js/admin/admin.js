@@ -7,6 +7,7 @@ import {
 } from '../catalog.js';
 import { formatarTelefone } from '../whatsapp.js';
 import { CLOUDINARY } from '../config.js';
+import { urlOtimizada, ehCloudinary } from '../lib/imagem.js';
 
 const $ = (id) => document.getElementById(id);
 const DISP_TEXTO = { 'em-estoque': 'Em estoque', 'ultimas-unidades': 'Últimas unidades', esgotado: 'Esgotado' };
@@ -319,12 +320,13 @@ const linkValido = (v) => {
 const statusFoto = (texto) => { $('pf-foto-status').textContent = texto; };
 
 // Confere no navegador que o link carrega uma imagem (nao aceita paginas HTML).
+// Resolve com as medidas da imagem, ou null se o link nao carregar.
 function verificarImagem(url) {
   return new Promise((ok) => {
     const img = new Image();
-    const limite = setTimeout(() => { img.onload = img.onerror = null; ok(false); }, 10000);
-    img.onload = () => { clearTimeout(limite); ok(true); };
-    img.onerror = () => { clearTimeout(limite); ok(false); };
+    const limite = setTimeout(() => { img.onload = img.onerror = null; ok(null); }, 10000);
+    img.onload = () => { clearTimeout(limite); ok({ w: img.naturalWidth, h: img.naturalHeight }); };
+    img.onerror = () => { clearTimeout(limite); ok(null); };
     img.referrerPolicy = 'no-referrer';
     img.src = url;
   });
@@ -341,19 +343,24 @@ async function comEnvio(fn) {
 }
 
 async function adicionarFoto(url) {
-  const v = url.trim();
+  // Foto do Cloudinary entra sempre na versao WebP de 1200 px (sem mudar a original)
+  const v = urlOtimizada(url.trim(), 1200);
   if (fotos.length >= MAX_FOTOS) { statusFoto(`Limite de ${MAX_FOTOS} fotos por produto.`); return false; }
   if (!linkValido(v)) { statusFoto('Informe um link https válido de até 500 caracteres.'); return false; }
   if (fotos.includes(v)) { statusFoto('Essa foto já está na lista.'); return false; }
   statusFoto('Conferindo o link...');
-  const ok = await verificarImagem(v);
-  if (!ok) {
+  const medidas = await verificarImagem(v);
+  if (!medidas) {
     statusFoto('Este link não carregou uma imagem. Confira se é o endereço direto da foto: ao abrir o link no navegador, deve aparecer só a imagem.');
     return false;
   }
   fotos.push(v);
   desenharGaleria();
-  statusFoto('Foto adicionada. Ela será salva ao confirmar o produto.');
+  // Foto grande fora do Cloudinary nao pode ser reduzida pelo site
+  const grande = Math.max(medidas.w, medidas.h) > 2000 && !ehCloudinary(v);
+  statusFoto(grande
+    ? `Foto adicionada, mas ela tem ${medidas.w} x ${medidas.h} px e não está no Cloudinary, então o site não consegue reduzi-la. Para ficar leve, use "Enviar do computador".`
+    : 'Foto adicionada. Ela será salva ao confirmar o produto.');
   announce('Foto adicionada');
   return true;
 }
@@ -435,15 +442,7 @@ async function enviarParaCloudinary(blob, nomeOriginal) {
   if (!resp.ok || !resposta.secure_url) {
     throw new Error((resposta.error && resposta.error.message) || 'Falha ao enviar a foto.');
   }
-  return versaoWebp(resposta.secure_url);
-}
-
-// Entrega sempre em WebP: o Cloudinary converte na hora (f_webp), mesmo quando o
-// navegador nao consegue gerar WebP (ex.: Safari envia PNG). Largura maxima 1200 px.
-function versaoWebp(url) {
-  const marca = '/image/upload/';
-  if (!url.includes(marca)) return url;
-  return url.replace(marca, `${marca}f_webp,q_auto,c_limit,w_1200/`);
+  return resposta.secure_url;
 }
 
 document.querySelectorAll('input[name="pf-origem"]').forEach((r) => {

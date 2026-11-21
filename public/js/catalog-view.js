@@ -2,6 +2,7 @@
 // Os cards sao atualizados no lugar (por id), sem recriar a lista, para que o foco
 // do teclado e a posicao de rolagem nao se percam quando o estoque muda em tempo real.
 import { h, icon, semAcento } from './lib/dom.js';
+import { urlOtimizada } from './lib/imagem.js';
 import {
   CATEGORIAS, CONDICAO_LABEL, PROCEDENCIA_LABEL, disponibilidade, formatBRL,
 } from './catalog.js';
@@ -97,7 +98,7 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
 
     // Texto alternativo dinamico: usa o texto cadastrado ou monta um a partir dos dados.
     const usaFoto = url !== '' && !ref.falhou;
-    const src = usaFoto ? url : PLACEHOLDER;
+    const src = usaFoto ? urlOtimizada(url, 640) : PLACEHOLDER;
     if (ref.img.getAttribute('src') !== src) ref.img.setAttribute('src', src);
     const base = p.imagemAlt || `${p.nome} - ${condicao}`;
     ref.img.alt = usaFoto
@@ -108,7 +109,7 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
     if (ref.chaveFotos !== chave) {
       ref.chaveFotos = chave;
       ref.miniaturas.replaceChildren(...(fotos.length > 1 ? fotos.map((u, i) => {
-        const miniatura = h('img', { src: u, alt: '', width: '56', height: '56', loading: 'lazy', decoding: 'async', referrerpolicy: 'no-referrer' });
+        const miniatura = h('img', { src: urlOtimizada(u, 160), alt: '', width: '56', height: '56', loading: 'lazy', decoding: 'async', referrerpolicy: 'no-referrer' });
         const b = h('button', { type: 'button', class: 'product__thumb', 'aria-label': `Ver foto ${i + 1} de ${fotos.length}` }, miniatura);
         miniatura.addEventListener('error', () => b.remove());
         b.addEventListener('click', () => { ref.imagemAtual = u; ref.falhou = false; preencher(ref, ref.p); });
