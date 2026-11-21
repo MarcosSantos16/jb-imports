@@ -262,7 +262,7 @@ function iniciarRevelacao() {
         if (ev.propertyName === 'opacity') el.classList.remove('reveal', 'is-visible');
       }, { once: true });
     }
-  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  }, { rootMargin: '0px 0px -4% 0px', threshold: 0.05 });
 
   function preparar(el) {
     if (el.dataset.rev) return;
@@ -270,7 +270,7 @@ function iniciarRevelacao() {
     const pai = el.parentElement;
     if (pai) {
       const idx = Math.min([...pai.children].indexOf(el), 6);
-      if (idx > 0) el.style.setProperty('--d', `${idx * 70}ms`);
+      if (idx > 0) el.style.setProperty('--d', `${idx * 110}ms`);
     }
     el.classList.add('reveal');
     observador.observe(el);

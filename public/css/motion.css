@@ -170,15 +170,17 @@ a:not(.btn) {
 
 /* ---------- Revelacao ao rolar (js/fx.js marca e anima) ----------
    So esconde quando o JS esta ativo (html.js); sem JS, tudo aparece.
-   Usa a propriedade translate, para nao brigar com o hover (transform). */
+   Usa translate e scale (nao transform), para nao brigar com o hover. */
 html.js .reveal:not(.is-visible) {
   opacity: 0;
-  translate: 0 28px;
+  translate: 0 56px;
+  scale: 0.96;
 }
 html.js .reveal {
   transition:
-    opacity 760ms cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms),
-    translate 760ms cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms);
+    opacity 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms),
+    translate 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms),
+    scale 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms);
 }
 
 /* ---------- Cursor suave (desktop com mouse; js/fx.js) ---------- */
