@@ -81,3 +81,36 @@
 .field .arquivo-botao { display: inline-flex; width: auto; margin: 0; font-size: 0.9375rem; }
 .field .segmento__opcao { display: inline-flex; margin: 0; }
 .field .segmento__opcao span { margin: 0; font-size: 0.875rem; font-weight: 600; }
+
+/* Campo de link com botao ao lado */
+.campo-linha { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+.campo-linha .input { flex: 1 1 14rem; min-width: 0; }
+
+/* Galeria de fotos do produto (a primeira e a principal) */
+.galeria-controle { margin-top: var(--s3); }
+.galeria {
+  list-style: none;
+  margin: var(--s2) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s3);
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+}
+.galeria__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  padding: var(--s2);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md, 12px);
+}
+.galeria__img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: var(--bg);
+  border-radius: var(--r-sm, 8px);
+}
+.galeria__acoes { display: flex; flex-wrap: wrap; gap: var(--s1); }
+.galeria__acoes .btn { width: auto; margin: 0; }

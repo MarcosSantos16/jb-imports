@@ -5,6 +5,17 @@ const { AppError } = require('../middleware/errors');
 const { CATEGORIAS, CONDICOES, PROCEDENCIAS, disponibilidade } = require('../config/catalogo');
 
 const COLECAO = 'produtos';
+const MAX_FOTOS = 8;
+
+// Aceita qualquer link https de imagem (Cloudinary ou outro host). Que o link seja
+// de fato uma imagem e conferido no navegador do administrador antes de salvar.
+function urlImagemValida(v) {
+  try {
+    return new URL(v).protocol === 'https:' && v.length <= 500;
+  } catch (e) {
+    return false;
+  }
+}
 
 // Valida e normaliza os dados de um produto.
 // parcial = true: apenas os campos enviados sao validados (PATCH).
@@ -58,18 +69,31 @@ function validar(dados, parcial) {
     else erros.push('Ativo: use verdadeiro ou falso.');
   }
 
-  if (usa('imagemUrl')) {
+  // Galeria: a primeira foto e a principal (exibida na vitrine). imagemUrl espelha a principal.
+  if (d.imagens !== undefined) {
+    if (!Array.isArray(d.imagens) || d.imagens.length > MAX_FOTOS) {
+      erros.push(`Fotos: envie uma lista de até ${MAX_FOTOS} links.`);
+    } else {
+      const limpas = [...new Set(d.imagens.map((i) => (typeof i === 'string' ? i.trim() : '')).filter(Boolean))];
+      if (limpas.some((v) => !urlImagemValida(v))) {
+        erros.push('Fotos: cada foto precisa ser um link https válido de até 500 caracteres.');
+      } else {
+        out.imagens = limpas;
+        out.imagemUrl = limpas[0] || '';
+      }
+    }
+  }
+
+  if (usa('imagemUrl') && out.imagemUrl === undefined) {
     const v = typeof d.imagemUrl === 'string' ? d.imagemUrl.trim() : '';
     if (v === '') {
       out.imagemUrl = '';
+      out.imagens = [];
+    } else if (urlImagemValida(v)) {
+      out.imagemUrl = v;
+      out.imagens = [v];
     } else {
-      try {
-        const u = new URL(v);
-        if (u.protocol !== 'https:' || v.length > 500) throw new Error('invalida');
-        out.imagemUrl = v;
-      } catch (e) {
-        erros.push('URL da imagem: informe um link https válido de até 500 caracteres.');
-      }
+      erros.push('URL da imagem: informe um link https válido de até 500 caracteres.');
     }
   }
 
@@ -81,7 +105,7 @@ function validar(dados, parcial) {
 }
 
 async function criar(dados) {
-  const base = { ativo: true, garantiaLojaDias: 0, imagemUrl: '', imagemAlt: '', ...dados };
+  const base = { ativo: true, garantiaLojaDias: 0, imagemUrl: '', imagens: [], imagemAlt: '', ...dados };
   const produto = validar(base, false);
   const ref = db().collection(COLECAO).doc();
   const agora = FieldValue.serverTimestamp();

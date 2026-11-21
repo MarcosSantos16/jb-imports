@@ -285,11 +285,12 @@ function abrirFormulario(id) {
   $('pf-preco').value = p ? centavosParaCampo(p.precoCentavos) : '';
   $('pf-estoque').value = p ? String(p.estoque) : '0';
   $('pf-garantia').value = p ? String(p.garantiaLojaDias || 0) : '0';
-  $('pf-imagem').value = p ? p.imagemUrl || '' : '';
+  fotos = p ? fotosDoProduto(p) : [];
   $('pf-alt').value = p ? p.imagemAlt || '' : '';
-  $('pf-arquivo-status').textContent = '';
+  $('pf-imagem').value = '';
+  statusFoto('');
   escolherOrigem('url');
-  mostrarPreview($('pf-imagem').value, $('pf-nome').value);
+  desenharGaleria();
   $('pf-ativo').checked = p ? p.ativo === true : true;
   $('pf-error').hidden = true;
   dialogoProduto.showModal();
@@ -304,14 +305,99 @@ let enviandoFoto = false;
 const cloudinaryConfigurado = () =>
   !String(CLOUDINARY.cloudName).includes('PREENCHER') && !String(CLOUDINARY.uploadPreset).includes('PREENCHER');
 
-function mostrarPreview(url, nome) {
-  const caixa = $('pf-preview-box');
-  const img = $('pf-preview');
-  if (!url || !/^https:\/\//.test(url)) { caixa.hidden = true; img.removeAttribute('src'); return; }
-  img.onerror = () => { caixa.hidden = true; };
-  img.alt = nome ? `Foto de ${nome}` : 'Foto do produto';
-  img.src = url;
-  caixa.hidden = false;
+// Galeria do produto: a primeira foto e a principal (vitrine). Limite de MAX_FOTOS.
+const MAX_FOTOS = 8;
+let fotos = [];
+
+const fotosDoProduto = (p) =>
+  Array.isArray(p.imagens) && p.imagens.length ? p.imagens.slice() : (p.imagemUrl ? [p.imagemUrl] : []);
+
+const linkValido = (v) => {
+  try { return new URL(v).protocol === 'https:' && v.length <= 500; } catch (e) { return false; }
+};
+
+const statusFoto = (texto) => { $('pf-foto-status').textContent = texto; };
+
+// Confere no navegador que o link carrega uma imagem (nao aceita paginas HTML).
+function verificarImagem(url) {
+  return new Promise((ok) => {
+    const img = new Image();
+    const limite = setTimeout(() => { img.onload = img.onerror = null; ok(false); }, 10000);
+    img.onload = () => { clearTimeout(limite); ok(true); };
+    img.onerror = () => { clearTimeout(limite); ok(false); };
+    img.referrerPolicy = 'no-referrer';
+    img.src = url;
+  });
+}
+
+// Enquanto uma foto esta sendo conferida ou enviada, o produto nao pode ser salvo.
+async function comEnvio(fn) {
+  enviandoFoto = true;
+  $('pf-submit').disabled = true;
+  try { return await fn(); } finally {
+    enviandoFoto = false;
+    $('pf-submit').disabled = false;
+  }
+}
+
+async function adicionarFoto(url) {
+  const v = url.trim();
+  if (fotos.length >= MAX_FOTOS) { statusFoto(`Limite de ${MAX_FOTOS} fotos por produto.`); return false; }
+  if (!linkValido(v)) { statusFoto('Informe um link https válido de até 500 caracteres.'); return false; }
+  if (fotos.includes(v)) { statusFoto('Essa foto já está na lista.'); return false; }
+  statusFoto('Conferindo o link...');
+  const ok = await verificarImagem(v);
+  if (!ok) {
+    statusFoto('Este link não carregou uma imagem. Confira se é o endereço direto da foto: ao abrir o link no navegador, deve aparecer só a imagem.');
+    return false;
+  }
+  fotos.push(v);
+  desenharGaleria();
+  statusFoto('Foto adicionada. Ela será salva ao confirmar o produto.');
+  announce('Foto adicionada');
+  return true;
+}
+
+function botaoFoto(texto, fn) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'btn btn--secondary btn--sm';
+  b.textContent = texto;
+  b.addEventListener('click', fn);
+  return b;
+}
+
+function desenharGaleria() {
+  const lista = $('pf-galeria');
+  const nome = $('pf-nome').value.trim() || 'produto';
+  $('pf-galeria-resumo').textContent = fotos.length
+    ? `${fotos.length} ${fotos.length === 1 ? 'foto' : 'fotos'}. A primeira é a principal.`
+    : 'Nenhuma foto cadastrada.';
+  lista.replaceChildren(...fotos.map((url, i) => {
+    const item = document.createElement('li');
+    item.className = 'galeria__item';
+    const img = document.createElement('img');
+    img.className = 'galeria__img';
+    img.src = url;
+    img.width = 96;
+    img.height = 96;
+    img.loading = 'lazy';
+    img.alt = `Foto ${i + 1} de ${nome}${i === 0 ? ', principal' : ''}`;
+    img.addEventListener('error', () => { img.alt = `Foto ${i + 1} não carrega. Remova e adicione outro link.`; });
+    const acoes = document.createElement('div');
+    acoes.className = 'galeria__acoes';
+    const abrir = document.createElement('a');
+    abrir.className = 'btn btn--secondary btn--sm';
+    abrir.href = url;
+    abrir.target = '_blank';
+    abrir.rel = 'noopener noreferrer';
+    abrir.textContent = 'Abrir foto';
+    acoes.append(abrir);
+    if (i > 0) acoes.append(botaoFoto('Tornar principal', () => { fotos.unshift(fotos.splice(i, 1)[0]); desenharGaleria(); }));
+    acoes.append(botaoFoto('Remover', () => { fotos.splice(i, 1); desenharGaleria(); statusFoto('Foto removida.'); }));
+    item.append(img, acoes);
+    return item;
+  }));
 }
 
 function escolherOrigem(origem) {
@@ -356,44 +442,52 @@ document.querySelectorAll('input[name="pf-origem"]').forEach((r) => {
   r.addEventListener('change', () => escolherOrigem(r.value));
 });
 
-$('pf-imagem').addEventListener('input', () => mostrarPreview($('pf-imagem').value.trim(), $('pf-nome').value));
+// Enter no campo de link adiciona a foto (sem enviar o formulario do produto)
+$('pf-imagem').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  $('pf-adicionar-url').click();
+});
+
+$('pf-adicionar-url').addEventListener('click', () => comEnvio(async () => {
+  if (await adicionarFoto($('pf-imagem').value)) $('pf-imagem').value = '';
+}));
+
+$('pf-nome').addEventListener('change', desenharGaleria);
 
 $('pf-arquivo').addEventListener('change', async (e) => {
   const entrada = e.target;
   const arquivo = entrada.files && entrada.files[0];
-  const status = $('pf-arquivo-status');
   if (!arquivo) return;
   entrada.value = '';
 
   if (!cloudinaryConfigurado()) {
-    status.textContent = 'Envio de fotos ainda não configurado. Preencha CLOUDINARY em public/js/config.js ou use a opção Colar URL.';
+    statusFoto('Envio de fotos ainda não configurado. Preencha CLOUDINARY em public/js/config.js ou use a opção Colar URL.');
     return;
   }
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(arquivo.type)) {
-    status.textContent = 'Formato não aceito. Use JPG, PNG ou WebP.';
+    statusFoto('Formato não aceito. Use JPG, PNG ou WebP.');
     return;
   }
   if (arquivo.size > LIMITE_FOTO) {
-    status.textContent = 'Foto muito grande. O limite é 8 MB.';
+    statusFoto('Foto muito grande. O limite é 8 MB.');
+    return;
+  }
+  if (fotos.length >= MAX_FOTOS) {
+    statusFoto(`Limite de ${MAX_FOTOS} fotos por produto.`);
     return;
   }
 
-  enviandoFoto = true;
-  $('pf-submit').disabled = true;
-  status.textContent = 'Enviando foto...';
-  try {
-    const blob = await reduzirFoto(arquivo);
-    const url = await enviarParaCloudinary(blob, arquivo.name);
-    $('pf-imagem').value = url;
-    mostrarPreview(url, $('pf-nome').value);
-    status.textContent = 'Foto enviada. Ela será salva ao confirmar o produto.';
-    announce('Foto enviada');
-  } catch (err) {
-    status.textContent = `Não foi possível enviar a foto: ${err.message}`;
-  } finally {
-    enviandoFoto = false;
-    $('pf-submit').disabled = false;
-  }
+  await comEnvio(async () => {
+    statusFoto('Enviando foto...');
+    try {
+      const blob = await reduzirFoto(arquivo);
+      const url = await enviarParaCloudinary(blob, arquivo.name);
+      await adicionarFoto(url);
+    } catch (err) {
+      statusFoto(`Não foi possível enviar a foto: ${err.message}`);
+    }
+  });
 });
 
 $('new-product').addEventListener('click', () => abrirFormulario(null));
@@ -419,6 +513,13 @@ $('product-form').addEventListener('submit', async (e) => {
     return;
   }
 
+  if ($('pf-imagem').value.trim()) {
+    erro.hidden = false;
+    erro.textContent = 'Clique em "Adicionar link" para incluir a foto, ou apague o texto do campo.';
+    erro.focus();
+    return;
+  }
+
   const corpo = {
     nome: $('pf-nome').value,
     categoriaId: $('pf-categoria').value,
@@ -428,7 +529,8 @@ $('product-form').addEventListener('submit', async (e) => {
     precoCentavos,
     estoque: Number($('pf-estoque').value),
     garantiaLojaDias: Number($('pf-garantia').value || 0),
-    imagemUrl: $('pf-imagem').value,
+    imagens: fotos.slice(),
+    imagemUrl: fotos[0] || '',
     imagemAlt: $('pf-alt').value,
     ativo: $('pf-ativo').checked,
   };

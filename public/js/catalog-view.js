@@ -54,9 +54,12 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
       preco: h('p', { class: 'product__price' }),
       status: h('p', { class: 'stock' }, h('span', { class: 'stock__dot', 'aria-hidden': 'true' }), h('span', { class: 'stock__text' })),
       botao: h('button', { type: 'button', class: 'btn btn--primary btn--block' }),
-      imagemAtual: null,
+      miniaturas: h('div', { class: 'product__thumbs', role: 'group', 'aria-label': 'Fotos do produto' }),
+      imagemAtual: '',
+      chaveFotos: '',
       falhou: false,
       ultimoEstado: null,
+      p: null,
     };
     ref.botao.addEventListener('click', () => aoAdicionar(id));
     img.addEventListener('error', () => {
@@ -68,7 +71,7 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
     ref.el = h('article', { class: 'product', dataset: { id } },
       h('div', { class: 'product__media' }, img),
       h('div', { class: 'product__body' },
-        ref.selos, ref.nome, ref.descricao, ref.garantia,
+        ref.selos, ref.nome, ref.descricao, ref.miniaturas, ref.garantia,
         h('div', { class: 'product__foot' }, ref.preco, ref.status),
         ref.botao));
     return ref;
@@ -83,15 +86,37 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
     ref.descricao.textContent = p.descricao || '';
     ref.preco.textContent = formatBRL(p.precoCentavos);
 
+    // Galeria: a primeira foto e a principal. A foto escolhida pelo visitante e mantida nas atualizacoes de estoque.
+    ref.p = p;
+    const fotos = Array.isArray(p.imagens) && p.imagens.length
+      ? p.imagens.filter((u) => typeof u === 'string' && u !== '')
+      : (typeof p.imagemUrl === 'string' && p.imagemUrl ? [p.imagemUrl] : []);
+    if (!fotos.includes(ref.imagemAtual)) { ref.falhou = false; ref.imagemAtual = fotos[0] || ''; }
+    const url = ref.imagemAtual;
+    const posicao = fotos.indexOf(url) + 1;
+
     // Texto alternativo dinamico: usa o texto cadastrado ou monta um a partir dos dados.
-    const url = typeof p.imagemUrl === 'string' ? p.imagemUrl : '';
-    if (ref.imagemAtual !== url) { ref.falhou = false; ref.imagemAtual = url; }
     const usaFoto = url !== '' && !ref.falhou;
     const src = usaFoto ? url : PLACEHOLDER;
     if (ref.img.getAttribute('src') !== src) ref.img.setAttribute('src', src);
+    const base = p.imagemAlt || `${p.nome} - ${condicao}`;
     ref.img.alt = usaFoto
-      ? (p.imagemAlt || `${p.nome} - ${condicao}`)
+      ? (fotos.length > 1 ? `${base}, foto ${posicao} de ${fotos.length}` : base)
       : `Imagem ilustrativa de ${p.nome}. Foto real em breve.`;
+
+    const chave = fotos.join('|');
+    if (ref.chaveFotos !== chave) {
+      ref.chaveFotos = chave;
+      ref.miniaturas.replaceChildren(...(fotos.length > 1 ? fotos.map((u, i) => {
+        const miniatura = h('img', { src: u, alt: '', width: '56', height: '56', loading: 'lazy', decoding: 'async', referrerpolicy: 'no-referrer' });
+        const b = h('button', { type: 'button', class: 'product__thumb', 'aria-label': `Ver foto ${i + 1} de ${fotos.length}` }, miniatura);
+        miniatura.addEventListener('error', () => b.remove());
+        b.addEventListener('click', () => { ref.imagemAtual = u; ref.falhou = false; preencher(ref, ref.p); });
+        return b;
+      }) : []));
+    }
+    ref.miniaturas.hidden = fotos.length < 2;
+    ref.miniaturas.querySelectorAll('button').forEach((b, i) => b.setAttribute('aria-pressed', String(fotos[i] === url)));
 
     const selo = (texto, classe = '') => h('span', { class: `badge ${classe}`.trim() }, texto);
     ref.selos.replaceChildren(

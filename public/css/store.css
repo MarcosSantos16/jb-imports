@@ -245,3 +245,22 @@
 .contact__form { min-width: 0; }
 .cart-line__info { min-width: 0; }
 .stock__text { display: inline; }
+
+/* Miniaturas das fotos do produto (so aparecem com mais de uma foto) */
+.product__thumbs { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.product__thumbs[hidden] { display: none; }
+.product__thumb {
+  padding: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-control);
+  background: var(--surface);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+}
+.product__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.product__thumb:hover { border-color: var(--accent); }
+.product__thumb[aria-pressed="true"] { border-color: var(--accent); box-shadow: var(--glow-sm); }
+.product__thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
