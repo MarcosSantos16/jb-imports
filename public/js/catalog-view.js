@@ -46,12 +46,9 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
 
   function criarCard(id) {
     const img = h('img', { class: 'product__img', width: '640', height: '480', loading: 'lazy', decoding: 'async', referrerpolicy: 'no-referrer', alt: '' });
-    // Fundo: a propria foto desfocada, para preencher as laterais sem cortar a foto
-    const fundo = h('img', { class: 'product__fundo', alt: '', 'aria-hidden': 'true', loading: 'lazy', decoding: 'async', referrerpolicy: 'no-referrer' });
     const ampliar = h('button', { type: 'button', class: 'product__zoom', 'aria-label': 'Ampliar foto' }, img);
     const ref = {
       img,
-      fundo,
       ampliar,
       fotos: [],
       selos: h('div', { class: 'product__badges' }),
@@ -75,12 +72,11 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
     img.addEventListener('error', () => {
       if (ref.falhou) return;
       ref.falhou = true;
-      ref.fundo.hidden = true;
       img.setAttribute('src', PLACEHOLDER);
       img.alt = `Imagem ilustrativa de ${ref.nome.textContent}. Foto real em breve.`;
     });
     ref.el = h('article', { class: 'product', dataset: { id } },
-      h('div', { class: 'product__media' }, ref.fundo, ref.ampliar),
+      h('div', { class: 'product__media' }, ref.ampliar),
       h('div', { class: 'product__body' },
         ref.selos, ref.nome, ref.descricao, ref.miniaturas, ref.garantia,
         h('div', { class: 'product__foot' }, ref.preco, ref.status),
@@ -111,8 +107,6 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
     const src = usaFoto ? urlOtimizada(url, 640) : PLACEHOLDER;
     if (ref.img.getAttribute('src') !== src) ref.img.setAttribute('src', src);
     ref.fotos = usaFoto ? fotos : [];
-    ref.fundo.hidden = !usaFoto;
-    if (usaFoto && ref.fundo.getAttribute('src') !== urlOtimizada(url, 640)) ref.fundo.setAttribute('src', urlOtimizada(url, 640));
     ref.ampliar.disabled = !usaFoto;
     ref.ampliar.setAttribute('aria-label', usaFoto ? `Ampliar foto de ${p.nome}` : `Sem foto de ${p.nome}`);
     const base = p.imagemAlt || `${p.nome} - ${condicao}`;

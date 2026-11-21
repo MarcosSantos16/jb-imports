@@ -47,7 +47,7 @@ a:not(.btn) {
 }
 
 .product__media {
-  background-color: var(--surface-raised);
+  background-color: var(--bg);
 }
 
 .product__img {
