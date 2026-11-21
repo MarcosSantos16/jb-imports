@@ -9,13 +9,22 @@ const MAX_FOTOS = 8;
 
 // Aceita qualquer link https de imagem (Cloudinary ou outro host). Que o link seja
 // de fato uma imagem e conferido no navegador do administrador antes de salvar.
+// Foto enviada do computador vai dentro do produto como WebP em base64 (sem servico externo).
+// O documento do Firestore tem limite de 1 MiB, por isso ha teto por foto e por produto.
+const FOTO_LOCAL = /^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+/]+=*$/;
+const LIMITE_CHARS_FOTO = 150000;
+const LIMITE_CHARS_FOTOS = 800000;
+
 function urlImagemValida(v) {
+  if (v.startsWith('data:')) return v.length <= LIMITE_CHARS_FOTO && FOTO_LOCAL.test(v);
   try {
     return new URL(v).protocol === 'https:' && v.length <= 500;
   } catch (e) {
     return false;
   }
 }
+
+const totalCharsFotos = (lista) => lista.reduce((s, v) => s + (v.startsWith('data:') ? v.length : 0), 0);
 
 // Valida e normaliza os dados de um produto.
 // parcial = true: apenas os campos enviados sao validados (PATCH).
@@ -76,7 +85,9 @@ function validar(dados, parcial) {
     } else {
       const limpas = [...new Set(d.imagens.map((i) => (typeof i === 'string' ? i.trim() : '')).filter(Boolean))];
       if (limpas.some((v) => !urlImagemValida(v))) {
-        erros.push('Fotos: cada foto precisa ser um link https válido de até 500 caracteres.');
+        erros.push('Fotos: cada foto precisa ser um link https válido de até 500 caracteres ou uma foto enviada do computador (até 150 KB).');
+      } else if (totalCharsFotos(limpas) > LIMITE_CHARS_FOTOS) {
+        erros.push('Fotos: as fotos enviadas do computador somam muito. Use menos fotos ou links de imagem.');
       } else {
         out.imagens = limpas;
         out.imagemUrl = limpas[0] || '';

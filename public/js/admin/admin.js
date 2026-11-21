@@ -6,7 +6,6 @@ import {
   CATEGORIAS, CONDICAO_LABEL, disponibilidade, formatBRL, categoriaNome,
 } from '../catalog.js';
 import { formatarTelefone } from '../whatsapp.js';
-import { CLOUDINARY } from '../config.js';
 import { urlOtimizada, ehCloudinary } from '../lib/imagem.js';
 
 const $ = (id) => document.getElementById(id);
@@ -303,8 +302,6 @@ function abrirFormulario(id) {
 const LIMITE_FOTO = 8 * 1024 * 1024;
 let enviandoFoto = false;
 
-const cloudinaryConfigurado = () =>
-  !String(CLOUDINARY.cloudName).includes('PREENCHER') && !String(CLOUDINARY.uploadPreset).includes('PREENCHER');
 
 // Galeria do produto: a primeira foto e a principal (vitrine). Limite de MAX_FOTOS.
 const MAX_FOTOS = 8;
@@ -313,9 +310,21 @@ let fotos = [];
 const fotosDoProduto = (p) =>
   Array.isArray(p.imagens) && p.imagens.length ? p.imagens.slice() : (p.imagemUrl ? [p.imagemUrl] : []);
 
+// Foto do computador ja vem reduzida em WebP (data:) e cabe no limite por foto do servidor
+const ehFotoLocal = (v) => v.startsWith('data:image/');
 const linkValido = (v) => {
+  if (ehFotoLocal(v)) return v.length <= 150000;
   try { return new URL(v).protocol === 'https:' && v.length <= 500; } catch (e) { return false; }
 };
+
+// Foto do computador vira link temporario para abrir em nova aba (navegadores bloqueiam data: no topo)
+function linkAbrir(url) {
+  if (!ehFotoLocal(url)) return url;
+  const [cabeca, base64] = url.split(',');
+  const tipo = cabeca.slice(5, cabeca.indexOf(';'));
+  const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+  return URL.createObjectURL(new Blob([bytes], { type: tipo }));
+}
 
 const statusFoto = (texto) => { $('pf-foto-status').textContent = texto; };
 
@@ -357,9 +366,9 @@ async function adicionarFoto(url) {
   fotos.push(v);
   desenharGaleria();
   // Foto grande fora do Cloudinary nao pode ser reduzida pelo site
-  const grande = Math.max(medidas.w, medidas.h) > 2000 && !ehCloudinary(v);
+  const grande = Math.max(medidas.w, medidas.h) > 2000 && !ehCloudinary(v) && !ehFotoLocal(v);
   statusFoto(grande
-    ? `Foto adicionada, mas ela tem ${medidas.w} x ${medidas.h} px e não está no Cloudinary, então o site não consegue reduzi-la. Para ficar leve, use "Enviar do computador".`
+    ? `Foto adicionada, mas ela tem ${medidas.w} x ${medidas.h} px, e o site não consegue reduzi-la. Para ficar leve, use "Enviar do computador".`
     : 'Foto adicionada. Ela será salva ao confirmar o produto.');
   announce('Foto adicionada');
   return true;
@@ -395,7 +404,7 @@ function desenharGaleria() {
     acoes.className = 'galeria__acoes';
     const abrir = document.createElement('a');
     abrir.className = 'btn btn--secondary btn--sm';
-    abrir.href = url;
+    abrir.href = linkAbrir(url);
     abrir.target = '_blank';
     abrir.rel = 'noopener noreferrer';
     abrir.textContent = 'Abrir foto';
@@ -414,36 +423,41 @@ function escolherOrigem(origem) {
   $('pf-origem-arquivo').hidden = !arquivo;
 }
 
-// Reduz a foto no navegador (lado maior ate 1200 px, WebP) antes do envio
-async function reduzirFoto(arquivo) {
+// Reduz a foto no navegador: lado maior ate 900 px, WebP. Se o navegador nao gerar WebP
+// (ex.: Safari antigo), usa JPEG. Cada foto fica abaixo de LIMITE_BYTES_FOTO.
+const LADO_FOTO = 900;
+const LIMITE_BYTES_FOTO = 110 * 1024;
+
+async function comprimirFoto(arquivo) {
   const imagem = await createImageBitmap(arquivo);
-  const escala = Math.min(1, 1200 / Math.max(imagem.width, imagem.height));
+  const escala = Math.min(1, LADO_FOTO / Math.max(imagem.width, imagem.height));
   const tela = document.createElement('canvas');
   tela.width = Math.max(1, Math.round(imagem.width * escala));
   tela.height = Math.max(1, Math.round(imagem.height * escala));
   tela.getContext('2d').drawImage(imagem, 0, 0, tela.width, tela.height);
   imagem.close && imagem.close();
-  return new Promise((ok, falha) => tela.toBlob(
+
+  const gerar = (tipo, qualidade) => new Promise((ok, falha) => tela.toBlob(
     (blob) => (blob ? ok(blob) : falha(new Error('Não foi possível processar a foto.'))),
-    'image/webp',
-    0.85,
+    tipo,
+    qualidade,
   ));
+  for (const tipo of ['image/webp', 'image/jpeg']) {
+    for (const qualidade of [0.82, 0.7, 0.55]) {
+      const blob = await gerar(tipo, qualidade);
+      if (blob.type !== tipo) break;
+      if (blob.size <= LIMITE_BYTES_FOTO) return blob;
+    }
+  }
+  throw new Error('Foto muito detalhada. Use uma foto menor ou com menos detalhes.');
 }
 
-async function enviarParaCloudinary(blob, nomeOriginal) {
-  const dados = new FormData();
-  dados.append('file', blob, `${(nomeOriginal || 'foto').replace(/\.[^.]+$/, '')}.webp`);
-  dados.append('upload_preset', CLOUDINARY.uploadPreset);
-  const resp = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY.cloudName}/image/upload`, {
-    method: 'POST',
-    body: dados,
-  });
-  const resposta = await resp.json().catch(() => ({}));
-  if (!resp.ok || !resposta.secure_url) {
-    throw new Error((resposta.error && resposta.error.message) || 'Falha ao enviar a foto.');
-  }
-  return resposta.secure_url;
-}
+const blobParaDataUri = (blob) => new Promise((ok, falha) => {
+  const leitor = new FileReader();
+  leitor.onload = () => ok(leitor.result);
+  leitor.onerror = () => falha(new Error('Não foi possível ler a foto.'));
+  leitor.readAsDataURL(blob);
+});
 
 document.querySelectorAll('input[name="pf-origem"]').forEach((r) => {
   r.addEventListener('change', () => escolherOrigem(r.value));
@@ -468,10 +482,6 @@ $('pf-arquivo').addEventListener('change', async (e) => {
   if (!arquivo) return;
   entrada.value = '';
 
-  if (!cloudinaryConfigurado()) {
-    statusFoto('Envio de fotos ainda não configurado. Preencha CLOUDINARY em public/js/config.js ou use a opção Colar URL.');
-    return;
-  }
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(arquivo.type)) {
     statusFoto('Formato não aceito. Use JPG, PNG ou WebP.');
     return;
@@ -486,13 +496,12 @@ $('pf-arquivo').addEventListener('change', async (e) => {
   }
 
   await comEnvio(async () => {
-    statusFoto('Enviando foto...');
+    statusFoto('Preparando foto...');
     try {
-      const blob = await reduzirFoto(arquivo);
-      const url = await enviarParaCloudinary(blob, arquivo.name);
-      await adicionarFoto(url);
+      const dataUri = await blobParaDataUri(await comprimirFoto(arquivo));
+      await adicionarFoto(dataUri);
     } catch (err) {
-      statusFoto(`Não foi possível enviar a foto: ${err.message}`);
+      statusFoto(`Não foi possível preparar a foto: ${err.message}`);
     }
   });
 });
