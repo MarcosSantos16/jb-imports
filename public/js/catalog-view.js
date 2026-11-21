@@ -46,8 +46,14 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
 
   function criarCard(id) {
     const img = h('img', { class: 'product__img', width: '640', height: '480', loading: 'lazy', decoding: 'async', referrerpolicy: 'no-referrer', alt: '' });
+    // Fundo: a propria foto desfocada, para preencher as laterais sem cortar a foto
+    const fundo = h('img', { class: 'product__fundo', alt: '', 'aria-hidden': 'true', loading: 'lazy', decoding: 'async', referrerpolicy: 'no-referrer' });
+    const ampliar = h('button', { type: 'button', class: 'product__zoom', 'aria-label': 'Ampliar foto' }, img);
     const ref = {
       img,
+      fundo,
+      ampliar,
+      fotos: [],
       selos: h('div', { class: 'product__badges' }),
       nome: h('h3', { class: 'product__name' }),
       descricao: h('p', { class: 'product__desc' }),
@@ -63,14 +69,18 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
       p: null,
     };
     ref.botao.addEventListener('click', () => aoAdicionar(id));
+    ref.ampliar.addEventListener('click', () => {
+      if (ref.fotos.length) abrirVisor(ref.fotos, ref.fotos.indexOf(ref.imagemAtual), ref.p ? ref.p.nome : '');
+    });
     img.addEventListener('error', () => {
       if (ref.falhou) return;
       ref.falhou = true;
+      ref.fundo.hidden = true;
       img.setAttribute('src', PLACEHOLDER);
       img.alt = `Imagem ilustrativa de ${ref.nome.textContent}. Foto real em breve.`;
     });
     ref.el = h('article', { class: 'product', dataset: { id } },
-      h('div', { class: 'product__media' }, img),
+      h('div', { class: 'product__media' }, ref.fundo, ref.ampliar),
       h('div', { class: 'product__body' },
         ref.selos, ref.nome, ref.descricao, ref.miniaturas, ref.garantia,
         h('div', { class: 'product__foot' }, ref.preco, ref.status),
@@ -100,6 +110,11 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
     const usaFoto = url !== '' && !ref.falhou;
     const src = usaFoto ? urlOtimizada(url, 640) : PLACEHOLDER;
     if (ref.img.getAttribute('src') !== src) ref.img.setAttribute('src', src);
+    ref.fotos = usaFoto ? fotos : [];
+    ref.fundo.hidden = !usaFoto;
+    if (usaFoto && ref.fundo.getAttribute('src') !== urlOtimizada(url, 640)) ref.fundo.setAttribute('src', urlOtimizada(url, 640));
+    ref.ampliar.disabled = !usaFoto;
+    ref.ampliar.setAttribute('aria-label', usaFoto ? `Ampliar foto de ${p.nome}` : `Sem foto de ${p.nome}`);
     const base = p.imagemAlt || `${p.nome} - ${condicao}`;
     ref.img.alt = usaFoto
       ? (fotos.length > 1 ? `${base}, foto ${posicao} de ${fotos.length}` : base)
@@ -232,4 +247,65 @@ export function iniciarPainelEstoque({ lista, status }) {
       linhas.forEach((l) => { l.valor.textContent = '-'; l.detalhe.textContent = 'indisponível'; });
     },
   };
+}
+
+// Visor de fotos: foto inteira, zoom e troca entre as fotos do produto.
+let visor = null;
+
+function criarVisor() {
+  const img = h('img', { class: 'visor__img', alt: '' });
+  const contador = h('p', { class: 'visor__contador', 'aria-live': 'polite' });
+  const fechar = h('button', { type: 'button', class: 'btn btn--secondary btn--sm' }, 'Fechar');
+  const anterior = h('button', { type: 'button', class: 'btn btn--secondary btn--sm' }, 'Anterior');
+  const proxima = h('button', { type: 'button', class: 'btn btn--secondary btn--sm' }, 'Próxima');
+  const zoom = h('button', { type: 'button', class: 'btn btn--primary btn--sm', 'aria-pressed': 'false' }, 'Ampliar');
+  const palco = h('div', { class: 'visor__palco' }, img);
+  const dialogo = h('dialog', { class: 'visor' },
+    h('div', { class: 'visor__barra' }, contador, fechar),
+    palco,
+    h('div', { class: 'visor__barra' }, anterior, zoom, proxima));
+  document.body.append(dialogo);
+
+  const v = { dialogo, fotos: [], i: 0, nome: '' };
+  v.mostrar = () => {
+    const total = v.fotos.length;
+    img.src = urlOtimizada(v.fotos[v.i], 1600);
+    img.alt = `${v.nome}, foto ${v.i + 1} de ${total}`;
+    contador.textContent = `${v.i + 1} de ${total}`;
+    anterior.hidden = total < 2;
+    proxima.hidden = total < 2;
+    palco.scrollTop = 0;
+    palco.scrollLeft = 0;
+  };
+  const navegar = (d) => { v.i = (v.i + d + v.fotos.length) % v.fotos.length; v.mostrar(); };
+  const alternarZoom = () => {
+    const ativo = dialogo.classList.toggle('is-zoom');
+    zoom.setAttribute('aria-pressed', String(ativo));
+    zoom.textContent = ativo ? 'Reduzir' : 'Ampliar';
+  };
+  fechar.addEventListener('click', () => dialogo.close());
+  anterior.addEventListener('click', () => navegar(-1));
+  proxima.addEventListener('click', () => navegar(1));
+  zoom.addEventListener('click', alternarZoom);
+  img.addEventListener('click', alternarZoom);
+  dialogo.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') navegar(-1);
+    else if (e.key === 'ArrowRight') navegar(1);
+  });
+  dialogo.addEventListener('close', () => {
+    dialogo.classList.remove('is-zoom');
+    zoom.setAttribute('aria-pressed', 'false');
+    zoom.textContent = 'Ampliar';
+  });
+  return v;
+}
+
+function abrirVisor(fotos, indice, nome) {
+  if (!visor) visor = criarVisor();
+  visor.fotos = fotos;
+  visor.i = Math.max(0, indice);
+  visor.nome = nome;
+  visor.dialogo.setAttribute('aria-label', `Fotos de ${nome}`);
+  visor.mostrar();
+  visor.dialogo.showModal();
 }
