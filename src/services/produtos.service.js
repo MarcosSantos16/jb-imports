@@ -12,7 +12,7 @@ const MAX_FOTOS = 8;
 // Foto enviada do computador vai dentro do produto como WebP em base64 (sem servico externo).
 // O documento do Firestore tem limite de 1 MiB, por isso ha teto por foto e por produto.
 const FOTO_LOCAL = /^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+/]+=*$/;
-const LIMITE_CHARS_FOTO = 150000;
+const LIMITE_CHARS_FOTO = 90000; // 60 KB em base64, com folga
 const LIMITE_CHARS_FOTOS = 800000;
 
 function urlImagemValida(v) {
@@ -85,7 +85,7 @@ function validar(dados, parcial) {
     } else {
       const limpas = [...new Set(d.imagens.map((i) => (typeof i === 'string' ? i.trim() : '')).filter(Boolean))];
       if (limpas.some((v) => !urlImagemValida(v))) {
-        erros.push('Fotos: cada foto precisa ser um link https válido de até 500 caracteres ou uma foto enviada do computador (até 150 KB).');
+        erros.push('Fotos: cada foto precisa ser um link https válido de até 500 caracteres ou uma foto enviada do computador (até 60 KB).');
       } else if (totalCharsFotos(limpas) > LIMITE_CHARS_FOTOS) {
         erros.push('Fotos: as fotos enviadas do computador somam muito. Use menos fotos ou links de imagem.');
       } else {

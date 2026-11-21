@@ -313,7 +313,7 @@ const fotosDoProduto = (p) =>
 // Foto do computador ja vem reduzida em WebP (data:) e cabe no limite por foto do servidor
 const ehFotoLocal = (v) => v.startsWith('data:image/');
 const linkValido = (v) => {
-  if (ehFotoLocal(v)) return v.length <= 150000;
+  if (ehFotoLocal(v)) return v.length <= 90000;
   try { return new URL(v).protocol === 'https:' && v.length <= 500; } catch (e) { return false; }
 };
 
@@ -423,32 +423,35 @@ function escolherOrigem(origem) {
   $('pf-origem-arquivo').hidden = !arquivo;
 }
 
-// Reduz a foto no navegador: lado maior ate 900 px, WebP. Se o navegador nao gerar WebP
+// Reduz a foto no navegador: lado maior ate 900 px, WebP, ate 60 KB. Se o navegador nao gerar WebP
 // (ex.: Safari antigo), usa JPEG. Cada foto fica abaixo de LIMITE_BYTES_FOTO.
-const LADO_FOTO = 900;
-const LIMITE_BYTES_FOTO = 110 * 1024;
+const LIMITE_BYTES_FOTO = 60 * 1024;
 
 async function comprimirFoto(arquivo) {
   const imagem = await createImageBitmap(arquivo);
-  const escala = Math.min(1, LADO_FOTO / Math.max(imagem.width, imagem.height));
-  const tela = document.createElement('canvas');
-  tela.width = Math.max(1, Math.round(imagem.width * escala));
-  tela.height = Math.max(1, Math.round(imagem.height * escala));
-  tela.getContext('2d').drawImage(imagem, 0, 0, tela.width, tela.height);
-  imagem.close && imagem.close();
-
-  const gerar = (tipo, qualidade) => new Promise((ok, falha) => tela.toBlob(
-    (blob) => (blob ? ok(blob) : falha(new Error('Não foi possível processar a foto.'))),
-    tipo,
-    qualidade,
-  ));
-  for (const tipo of ['image/webp', 'image/jpeg']) {
-    for (const qualidade of [0.82, 0.7, 0.55]) {
-      const blob = await gerar(tipo, qualidade);
-      if (blob.type !== tipo) break;
-      if (blob.size <= LIMITE_BYTES_FOTO) return blob;
+  const gerar = (tipo, qualidade, lado) => {
+    const escala = Math.min(1, lado / Math.max(imagem.width, imagem.height));
+    const tela = document.createElement('canvas');
+    tela.width = Math.max(1, Math.round(imagem.width * escala));
+    tela.height = Math.max(1, Math.round(imagem.height * escala));
+    tela.getContext('2d').drawImage(imagem, 0, 0, tela.width, tela.height);
+    return new Promise((ok, falha) => tela.toBlob(
+      (blob) => (blob ? ok(blob) : falha(new Error('Não foi possível processar a foto.'))),
+      tipo,
+      qualidade,
+    ));
+  };
+  // Primeiro tenta em WebP com lado maior de 900 px; se nao couber, diminui o tamanho em pixels.
+  for (const lado of [900, 700, 560]) {
+    for (const tipo of ['image/webp', 'image/jpeg']) {
+      for (const qualidade of [0.8, 0.65, 0.5, 0.4]) {
+        const blob = await gerar(tipo, qualidade, lado);
+        if (blob.type !== tipo) break;
+        if (blob.size <= LIMITE_BYTES_FOTO) { imagem.close && imagem.close(); return blob; }
+      }
     }
   }
+  imagem.close && imagem.close();
   throw new Error('Foto muito detalhada. Use uma foto menor ou com menos detalhes.');
 }
 
