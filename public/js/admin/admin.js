@@ -435,7 +435,15 @@ async function enviarParaCloudinary(blob, nomeOriginal) {
   if (!resp.ok || !resposta.secure_url) {
     throw new Error((resposta.error && resposta.error.message) || 'Falha ao enviar a foto.');
   }
-  return resposta.secure_url;
+  return versaoWebp(resposta.secure_url);
+}
+
+// Entrega sempre em WebP: o Cloudinary converte na hora (f_webp), mesmo quando o
+// navegador nao consegue gerar WebP (ex.: Safari envia PNG). Largura maxima 1200 px.
+function versaoWebp(url) {
+  const marca = '/image/upload/';
+  if (!url.includes(marca)) return url;
+  return url.replace(marca, `${marca}f_webp,q_auto,c_limit,w_1200/`);
 }
 
 document.querySelectorAll('input[name="pf-origem"]').forEach((r) => {
