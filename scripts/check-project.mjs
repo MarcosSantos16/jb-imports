@@ -80,8 +80,7 @@ if (totalEmoji === 0) pass('Nenhum emoji encontrado em ' + arquivosTexto.length 
 
 // --- 3. Placeholders legais ---
 console.log('\n=== 3. Placeholders Legais ===');
-const placeholders = ['[PREENCHER CNPJ]','[PREENCHER RAZAO SOCIAL]','[INSERIR CNPJ]',
-  '[PREENCHER ENDERECO','[PREENCHER E-MAIL','[PREENCHER NOME DO ENCARREGADO]'];
+const placeholders = ['[PREENCHER]'];
 const pagesHTML = listarArquivos(path.join(ROOT,'public'), ['.html']);
 for (const f of pagesHTML) {
   const c = fs.readFileSync(f,'utf8');

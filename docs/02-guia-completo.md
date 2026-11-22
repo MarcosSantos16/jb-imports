@@ -351,12 +351,11 @@ Antes de publicar a loja, preencha estes dados em todas as paginas:
 
 | Placeholder                    | O que preencher                                   |
 |--------------------------------|---------------------------------------------------|
-| [PREENCHER RAZAO SOCIAL]       | Razao social da empresa (ex: JB Comercio LTDA)   |
-| [INSERIR CNPJ]                 | CNPJ da empresa (formato: XX.XXX.XXX/XXXX-XX)    |
-| [PREENCHER ENDERECO COMPLETO]  | Rua, numero, bairro, cidade, CEP                  |
-| [PREENCHER E-MAIL DE ATENDIMENTO] | E-mail de contato (ex: contato@jbimports.com.br)|
-| [PREENCHER NOME DO ENCARREGADO]| Nome do DPO/Encarregado de Dados (LGPD)          |
-| [PREENCHER E-MAIL DO ENCARREGADO] | E-mail do DPO (pode ser o mesmo de atendimento)|
+| [PREENCHER]                    | CNPJ da empresa (formato: XX.XXX.XXX/XXXX-XX)    |
+| Endereco                       | Ja preenchido: Rua do Atlantico, 69 - Recife/PE |
+| [PREENCHER] | E-mail de contato (ex: contato@jbimports.com.br)|
+| [PREENCHER]| Nome do DPO/Encarregado de Dados (LGPD)          |
+| [PREENCHER] | E-mail do DPO (pode ser o mesmo de atendimento)|
 
 Esses campos estao nos arquivos:
 - `src/templates/partials/footer.html` (rodape — aparece em todas as paginas)
@@ -370,7 +369,7 @@ Apos editar, rode `npm run build` para regenerar as paginas HTML.
 
 ## PARTE 8 — CHECKLIST DE PRE-LANCAMENTO
 
-- [ ] Dados legais preenchidos (CNPJ, Razao Social, Endereco, E-mail, DPO)
+- [ ] Dados legais preenchidos ([PREENCHER] do CNPJ, e-mails e DPO)
 - [ ] Firebase configurado (Firestore + Auth + Security Rules publicadas)
 - [ ] Variaveis de ambiente configuradas na Vercel
 - [ ] `public/js/config.js` preenchido com credenciais reais do Firebase Web SDK
