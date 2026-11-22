@@ -1,7 +1,4 @@
-// Estado do carrinho: apenas ids e quantidades. Precos e estoque vem sempre dos
-// produtos em tempo real, entao o carrinho nunca mostra um valor desatualizado.
-// O localStorage e usado so para nao perder o carrinho ao recarregar (uso essencial).
-
+// Guarda o carrinho no navegador (so ids e quantidades).
 const CHAVE = 'jb_cart_v1';
 const MAX_POR_ITEM = 20;
 
@@ -23,7 +20,6 @@ function salvar() {
   try {
     localStorage.setItem(CHAVE, JSON.stringify(itens));
   } catch (e) {
-    /* armazenamento indisponivel: o carrinho segue valendo na sessao */
   }
   ouvintes.forEach((fn) => fn(itens));
 }

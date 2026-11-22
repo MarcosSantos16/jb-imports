@@ -1,6 +1,4 @@
-// Vitrine: filtros, cards e painel "Estoque agora".
-// Os cards sao atualizados no lugar (por id), sem recriar a lista, para que o foco
-// do teclado e a posicao de rolagem nao se percam quando o estoque muda em tempo real.
+// Vitrine: filtros, cards, visor de fotos e painel de estoque.
 import { h, icon, semAcento } from './lib/dom.js';
 import { urlOtimizada } from './lib/imagem.js';
 import {
@@ -18,7 +16,6 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
   const estado = { produtos: [], categoria: 'todos', condicao: 'todos', termo: '' };
   const cards = new Map();
 
-  // Filtros por categoria: botoes com aria-pressed, operaveis por Tab/Enter/Espaco.
   const botoes = [{ id: 'todos', nome: 'Todos' }, ...CATEGORIAS].map((c) => {
     const b = h('button', { type: 'button', class: 'chip', 'aria-pressed': String(c.id === 'todos'), dataset: { cat: c.id } }, c.nome);
     b.addEventListener('click', () => {
@@ -93,7 +90,6 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
     ref.descricao.textContent = p.descricao || '';
     ref.preco.textContent = formatBRL(p.precoCentavos);
 
-    // Galeria: a primeira foto e a principal. A foto escolhida pelo visitante e mantida nas atualizacoes de estoque.
     ref.p = p;
     const fotos = Array.isArray(p.imagens) && p.imagens.length
       ? p.imagens.filter((u) => typeof u === 'string' && u !== '')
@@ -102,7 +98,6 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
     const url = ref.imagemAtual;
     const posicao = fotos.indexOf(url) + 1;
 
-    // Texto alternativo dinamico: usa o texto cadastrado ou monta um a partir dos dados.
     const usaFoto = url !== '' && !ref.falhou;
     const src = usaFoto ? urlOtimizada(url, 640) : PLACEHOLDER;
     if (ref.img.getAttribute('src') !== src) ref.img.setAttribute('src', src);
@@ -211,10 +206,6 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
   };
 }
 
-// Painel do topo: unidades disponiveis por categoria, calculadas dos dados reais.
-// As linhas ja vem no HTML (com a mesma altura final), para o painel nao crescer
-// depois do carregamento e empurrar o conteudo abaixo (CLS). Sem linhas no HTML,
-// elas sao criadas aqui.
 export function iniciarPainelEstoque({ lista, status }) {
   const linhas = new Map();
   CATEGORIAS.forEach((c) => {
@@ -252,7 +243,6 @@ export function iniciarPainelEstoque({ lista, status }) {
   };
 }
 
-// Visor de fotos: foto inteira, zoom e troca entre as fotos do produto.
 let visor = null;
 
 function criarVisor() {

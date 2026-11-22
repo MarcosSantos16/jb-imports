@@ -1,10 +1,9 @@
+// Confere se quem chama a API e um administrador autenticado.
 'use strict';
 
 const { auth, db } = require('../config/firebase');
 const { AppError } = require('./errors');
 
-// Exige token do Firebase Authentication E presenca do usuario na colecao "admins".
-// Criar uma conta no Authentication sozinha nao concede acesso ao painel.
 async function requireAdmin(req, res, next) {
   const cabecalho = req.headers.authorization || '';
   const m = cabecalho.match(/^Bearer (.+)$/);
@@ -14,7 +13,6 @@ async function requireAdmin(req, res, next) {
   try {
     decodificado = await auth().verifyIdToken(m[1]);
   } catch (e) {
-    // Mostra o motivo real (projeto errado no .env, relogio do computador, token expirado...)
     console.error('[auth] verifyIdToken falhou:', e.message);
     throw new AppError(401, 'TOKEN_INVALIDO', 'Sessão expirada ou não validada pelo servidor.',
       [`Motivo: ${e.message}`]);

@@ -1,8 +1,5 @@
+// Preenche o Firestore com categorias e produtos de exemplo, inativos.
 'use strict';
-
-// Popula o Firestore com categorias, configuracoes e produtos de EXEMPLO.
-// Os produtos sao criados INATIVOS e sem preco real: revise e ative pelo painel /admin.
-// Uso: npm run seed   (requer .env com as credenciais do Firebase)
 
 const { db, FieldValue } = require('../src/config/firebase');
 const { CATEGORIAS, LIMITE_ULTIMAS_UNIDADES, POLITICA_VERSAO } = require('../src/config/catalogo');

@@ -1,3 +1,4 @@
+// Classe de erro padrao da API e tratamento das falhas.
 'use strict';
 
 class AppError extends Error {
@@ -16,7 +17,6 @@ function notFound(req, res, next) {
   next(new AppError(404, 'NAO_ENCONTRADO', 'Rota não encontrada.'));
 }
 
-// eslint-disable-next-line no-unused-vars
 function errorHandler(err, req, res, next) {
   let erro = err;
   if (err.type === 'entity.parse.failed') {

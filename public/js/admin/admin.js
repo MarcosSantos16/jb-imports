@@ -1,5 +1,4 @@
-// Painel administrativo: login (Firebase Auth), lista de produtos em tempo real
-// (onSnapshot) e operacoes de escrita pela API Node.js (/api/admin/*).
+// Painel do administrador: login, lista de produtos e pedidos e acoes de estoque.
 import { h, icon, announce } from '../lib/dom.js';
 import { firebaseReady, getApp, loadAuth, loadFirestore } from '../lib/firebase.js';
 import {
@@ -19,7 +18,6 @@ const produtos = new Map();
 const linhas = new Map();
 let editandoId = null;
 
-// ---------- utilidades ----------
 function mensagem(texto, tipo = 'ok') {
   const el = $('toast');
   el.hidden = false;
@@ -55,8 +53,6 @@ function parsePreco(texto) {
 
 const centavosParaCampo = (c) => (c / 100).toFixed(2).replace('.', ',');
 
-// ---------- login ----------
-// Traduz o codigo do Firebase em uma causa concreta, para o administrador saber o que corrigir.
 function mensagemDeLogin(codigo) {
   const mapa = {
     'auth/operation-not-allowed': 'O login por e-mail e senha não está ativado. No Firebase, vá em Authentication > Sign-in method e ative "E-mail/senha".',
@@ -150,7 +146,6 @@ $('login-form').addEventListener('submit', async (e) => {
 
 $('logout').addEventListener('click', () => authFns.signOut(auth));
 
-// ---------- abas ----------
 function mostrarAba(nome) {
   const produtosAtivos = nome === 'produtos';
   $('products-view').hidden = !produtosAtivos;
@@ -162,7 +157,6 @@ function mostrarAba(nome) {
 $('tab-products').addEventListener('click', () => mostrarAba('produtos'));
 $('tab-orders').addEventListener('click', () => mostrarAba('pedidos'));
 
-// ---------- produtos em tempo real ----------
 async function assinarProdutos() {
   cancelarProdutos();
   const [app, fs] = await Promise.all([getApp(), loadFirestore()]);
@@ -269,7 +263,6 @@ function renderizarProdutos() {
   $('products-count').textContent = lista.length ? `(${lista.length})` : '';
 }
 
-// ---------- formulario de produto ----------
 const dialogoProduto = $('product-dialog');
 $('pf-categoria').replaceChildren(...CATEGORIAS.map((c) => h('option', { value: c.id }, c.nome)));
 
@@ -297,27 +290,21 @@ function abrirFormulario(id) {
   $('pf-nome').focus();
 }
 
-
-// ---------- foto do produto: URL ou arquivo do computador ----------
 const LIMITE_FOTO = 8 * 1024 * 1024;
 let enviandoFoto = false;
 
-
-// Galeria do produto: a primeira foto e a principal (vitrine). Limite de MAX_FOTOS.
 const MAX_FOTOS = 8;
 let fotos = [];
 
 const fotosDoProduto = (p) =>
   Array.isArray(p.imagens) && p.imagens.length ? p.imagens.slice() : (p.imagemUrl ? [p.imagemUrl] : []);
 
-// Foto do computador ja vem reduzida em WebP (data:) e cabe no limite por foto do servidor
 const ehFotoLocal = (v) => v.startsWith('data:image/');
 const linkValido = (v) => {
   if (ehFotoLocal(v)) return v.length <= 90000;
   try { return new URL(v).protocol === 'https:' && v.length <= 500; } catch (e) { return false; }
 };
 
-// Foto do computador vira link temporario para abrir em nova aba (navegadores bloqueiam data: no topo)
 function linkAbrir(url) {
   if (!ehFotoLocal(url)) return url;
   const [cabeca, base64] = url.split(',');
@@ -328,8 +315,6 @@ function linkAbrir(url) {
 
 const statusFoto = (texto) => { $('pf-foto-status').textContent = texto; };
 
-// Confere no navegador que o link carrega uma imagem (nao aceita paginas HTML).
-// Resolve com as medidas da imagem, ou null se o link nao carregar.
 function verificarImagem(url) {
   return new Promise((ok) => {
     const img = new Image();
@@ -341,7 +326,6 @@ function verificarImagem(url) {
   });
 }
 
-// Enquanto uma foto esta sendo conferida ou enviada, o produto nao pode ser salvo.
 async function comEnvio(fn) {
   enviandoFoto = true;
   $('pf-submit').disabled = true;
@@ -352,7 +336,6 @@ async function comEnvio(fn) {
 }
 
 async function adicionarFoto(url) {
-  // Foto do Cloudinary entra sempre na versao WebP de 1200 px (sem mudar a original)
   const v = urlOtimizada(url.trim(), 1200);
   if (fotos.length >= MAX_FOTOS) { statusFoto(`Limite de ${MAX_FOTOS} fotos por produto.`); return false; }
   if (!linkValido(v)) { statusFoto('Informe um link https válido de até 500 caracteres.'); return false; }
@@ -365,7 +348,6 @@ async function adicionarFoto(url) {
   }
   fotos.push(v);
   desenharGaleria();
-  // Foto grande fora do Cloudinary nao pode ser reduzida pelo site
   const grande = Math.max(medidas.w, medidas.h) > 2000 && !ehCloudinary(v) && !ehFotoLocal(v);
   statusFoto(grande
     ? `Foto adicionada, mas ela tem ${medidas.w} x ${medidas.h} px, e o site não consegue reduzi-la. Para ficar leve, use "Enviar do computador".`
@@ -423,8 +405,6 @@ function escolherOrigem(origem) {
   $('pf-origem-arquivo').hidden = !arquivo;
 }
 
-// Reduz a foto no navegador: lado maior ate 900 px, WebP, ate 60 KB. Se o navegador nao gerar WebP
-// (ex.: Safari antigo), usa JPEG. Cada foto fica abaixo de LIMITE_BYTES_FOTO.
 const LIMITE_BYTES_FOTO = 60 * 1024;
 
 async function comprimirFoto(arquivo) {
@@ -441,7 +421,6 @@ async function comprimirFoto(arquivo) {
       qualidade,
     ));
   };
-  // Primeiro tenta em WebP com lado maior de 900 px; se nao couber, diminui o tamanho em pixels.
   for (const lado of [900, 700, 560]) {
     for (const tipo of ['image/webp', 'image/jpeg']) {
       for (const qualidade of [0.8, 0.65, 0.5, 0.4]) {
@@ -466,7 +445,6 @@ document.querySelectorAll('input[name="pf-origem"]').forEach((r) => {
   r.addEventListener('change', () => escolherOrigem(r.value));
 });
 
-// Enter no campo de link adiciona a foto (sem enviar o formulario do produto)
 $('pf-imagem').addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
   e.preventDefault();
@@ -570,7 +548,6 @@ $('product-form').addEventListener('submit', async (e) => {
   }
 });
 
-// ---------- pedidos ----------
 async function carregarPedidos() {
   const corpo = $('orders-body');
   try {

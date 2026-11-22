@@ -1,5 +1,4 @@
-// Constantes do catalogo (espelho de src/config/catalogo.js no servidor).
-
+// Categorias e regras do catalogo no navegador (espelho do servidor).
 export const CATEGORIAS = [
   { id: 'iphones', nome: 'iPhones', icone: 'phone' },
   { id: 'displays', nome: 'Displays e telas', icone: 'display' },

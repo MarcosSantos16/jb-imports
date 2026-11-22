@@ -1,4 +1,4 @@
-// Carrinho (gaveta), formulario de finalizacao e envio do pedido para a API.
+// Tela do carrinho e envio do pedido.
 import { h, icon, announce } from './lib/dom.js';
 import { cart } from './cart.js';
 import { formatBRL, CONDICAO_LABEL, disponibilidade } from './catalog.js';
@@ -33,7 +33,6 @@ export function iniciarCarrinho({ obterProduto }) {
     $('cart-title').textContent = v === 'dados' ? 'Seus dados' : v === 'fim' ? 'Pedido enviado' : 'Carrinho';
   }
 
-  // Une o carrinho aos produtos em tempo real e ajusta quantidades ao estoque.
   function linhas() {
     let ajustou = false;
     const resultado = cart.itens().map((item) => {
@@ -49,7 +48,7 @@ export function iniciarCarrinho({ obterProduto }) {
 
   function desenhar() {
     const { resultado, ajustou } = linhas();
-    if (ajustou) return; // cart.definir ja disparou nova renderizacao
+    if (ajustou) return;
 
     const total = cart.total();
     contador.textContent = String(total);
@@ -99,7 +98,6 @@ export function iniciarCarrinho({ obterProduto }) {
   });
   $('checkout-back').addEventListener('click', () => { mostrar('lista'); irParaDados.focus(); });
 
-  // --- Validacao e envio -------------------------------------------------
   function erroCampo(campo, mensagem) {
     const msg = $(`${campo.id}-error`);
     campo.setAttribute('aria-invalid', mensagem ? 'true' : 'false');

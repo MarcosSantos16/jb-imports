@@ -1,24 +1,17 @@
-// Efeitos visuais e interacoes da loja (JavaScript puro, sem dependencias).
-// - Grade de pontos em canvas que reage ao cursor (so desenha quando ha movimento)
-// - Botoes magneticos e ondulacao ao clicar
-// - Cards de produto com leve inclinacao 3D
-// - Revelacao ao rolar, indicador deslizante e secao atual no menu
-// Tudo respeita prefers-reduced-motion.
-
+// Efeitos visuais da loja: fundo de pontos, botoes magneticos e cards com inclinacao.
 const reduzir = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mouseFino = window.matchMedia('(hover: hover) and (pointer: fine)');
 const podeAnimar = () => !reduzir.matches;
 
 document.documentElement.classList.add('js');
 
-// ---------- 1. Grade de pontos (otimizada) ----------
-const ESPACAMENTO = 28;     // distancia entre pontos (px)
-const RAIO_BASE = 1.1;      // raio do ponto em repouso
-const INFLUENCIA = 150;     // raio de influencia do cursor (px)
-const EMPURRAO = 22;        // deslocamento maximo causado pelo cursor (px)
-const MOLA = 0.09;          // rigidez da mola que devolve o ponto
-const ATRITO = 0.82;        // amortecimento (menor = mais inercia)
-const DPR_MAX = 1.5;        // limite de densidade: economiza GPU/CPU em telas retina
+const ESPACAMENTO = 28;
+const RAIO_BASE = 1.1;
+const INFLUENCIA = 150;
+const EMPURRAO = 22;
+const MOLA = 0.09;
+const ATRITO = 0.82;
+const DPR_MAX = 1.5;
 
 function iniciarGradeDePontos(canvas) {
   const ctx = canvas.getContext('2d');
@@ -49,7 +42,6 @@ function iniciarGradeDePontos(canvas) {
     desenhar(true);
   }
 
-  // Retorna true enquanto algum ponto ainda esta se movendo
   function desenhar(forcar = false) {
     let agitado = false;
     ctx.clearRect(0, 0, largura, altura);
@@ -86,7 +78,6 @@ function iniciarGradeDePontos(canvas) {
     return agitado || forcar;
   }
 
-  // O loop roda so enquanto ha movimento. Em repouso nao gasta CPU nem GPU.
   function quadro() {
     const ainda = desenhar();
     if (ainda || mouse.ativo) {
@@ -111,7 +102,6 @@ function iniciarGradeDePontos(canvas) {
   }, { passive: true });
   document.addEventListener('pointerleave', () => { mouse.ativo = false; acordar(); });
   window.addEventListener('resize', montar);
-  // Economiza bateria: para o loop quando a aba fica oculta
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { cancelAnimationFrame(quadroId); rodando = false; }
     else acordar();
@@ -121,7 +111,6 @@ function iniciarGradeDePontos(canvas) {
   if (podeAnimar()) acordar();
 }
 
-// ---------- 3. Botoes magneticos e ondulacao ----------
 const SELETOR_MAGNETICO = '.btn, .icon-btn, .chip';
 
 function iniciarBotoes() {
@@ -156,7 +145,6 @@ function iniciarBotoes() {
   });
 }
 
-// ---------- 4. Cards de produto com inclinacao 3D ----------
 function iniciarCartoes() {
   if (!mouseFino.matches || !podeAnimar()) return;
   let quadro = 0;
@@ -167,7 +155,7 @@ function iniciarCartoes() {
     quadro = 0;
     if (!alvoCard) return;
     const r = alvoCard.getBoundingClientRect();
-    const px = (ultimo.x - r.left) / r.width - 0.5;   // -0.5 .. 0.5
+    const px = (ultimo.x - r.left) / r.width - 0.5;
     const py = (ultimo.y - r.top) / r.height - 0.5;
     alvoCard.style.setProperty('--rx', `${(-py * 6).toFixed(2)}deg`);
     alvoCard.style.setProperty('--ry', `${(px * 8).toFixed(2)}deg`);
@@ -185,7 +173,6 @@ function iniciarCartoes() {
   }, { passive: true });
 }
 
-// ---------- 5. Revelacao ao rolar ----------
 function iniciarRevelacao() {
   if (!podeAnimar() || !('IntersectionObserver' in window)) {
     document.documentElement.classList.remove('js');
@@ -228,7 +215,6 @@ function iniciarRevelacao() {
   }).observe(document.body, { childList: true, subtree: true });
 }
 
-// ---------- 6. Navegacao: indicador deslizante e secao atual ----------
 function iniciarNavegacao() {
   const lista = document.querySelector('.site-nav__list');
   if (!lista) return;
@@ -258,7 +244,6 @@ function iniciarNavegacao() {
   lista.addEventListener('focusin', (e) => moverPara(e.target.closest('a')));
   lista.addEventListener('focusout', () => moverPara(null));
 
-  // Secao visivel na tela vira o item atual do menu
   const links = [...document.querySelectorAll('.site-nav a[href*="#"]')];
   const secoes = links
     .map((a) => ({ a, el: document.getElementById(a.hash.slice(1)) }))
@@ -278,7 +263,6 @@ function iniciarNavegacao() {
   }
 }
 
-// ---------- 7. Cabecalho ao rolar ----------
 function iniciarCabecalho() {
   const cabecalho = document.querySelector('.site-header');
   if (!cabecalho) return;
@@ -293,7 +277,6 @@ function iniciarCabecalho() {
   atualizar();
 }
 
-// ---------- Inicializacao ----------
 const canvas = document.querySelector('.fx-dots');
 if (canvas) iniciarGradeDePontos(canvas);
 iniciarBotoes();

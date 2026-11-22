@@ -1,6 +1,4 @@
-/* Componentes reutilizaveis: botoes, formularios, avisos, gaveta, modal, cookies, tabelas */
 
-/* ---------- Botoes ---------- */
 .btn {
   position: relative;
   display: inline-flex;
@@ -23,7 +21,6 @@
 .btn--sm { min-height: 40px; padding: 0 var(--s4); font-size: 0.875rem; }
 .btn--block { width: 100%; }
 
-/* Botao principal: verde neon, texto preto (contraste 15:1), brilho que cresce no hover */
 .btn--primary {
   background: var(--accent);
   color: var(--on-accent);
@@ -72,7 +69,6 @@
 .link-btn { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; text-underline-offset: 0.2em; }
 .link-btn:hover { color: var(--accent-strong); text-shadow: var(--glow-sm); }
 
-/* ---------- Selos ---------- */
 .badge {
   display: inline-block;
   padding: 3px var(--s3);
@@ -84,7 +80,6 @@
 }
 .badge--alerta { border-color: var(--warn); color: var(--warn); }
 
-/* ---------- Situacao de estoque (cor + texto, nunca so cor) ---------- */
 .stock { display: inline-flex; align-items: center; gap: var(--s2); margin: 0; font-size: 0.875rem; font-weight: 600; color: var(--accent); }
 .stock__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: var(--glow-sm); }
 .stock[data-estado="ultimas-unidades"] { color: var(--warn); }
@@ -92,7 +87,6 @@
 .stock[data-estado="esgotado"] { color: var(--danger); }
 .stock[data-estado="esgotado"] .stock__dot { background: var(--danger); box-shadow: none; }
 
-/* ---------- Formularios ---------- */
 .field { margin-bottom: var(--s4); }
 .field label { display: block; margin-bottom: var(--s2); font-size: 0.9375rem; font-weight: 600; }
 .field--inline { margin: 0; }
@@ -134,7 +128,6 @@ textarea.input { resize: vertical; min-height: 6rem; }
 .form-note { color: var(--text-3); font-size: 0.875rem; }
 .form-actions { display: grid; gap: var(--s3); margin-top: var(--s5); }
 
-/* ---------- Avisos ---------- */
 .notice {
   margin: 0 0 var(--s4);
   padding: var(--s3) var(--s4);
@@ -159,7 +152,6 @@ textarea.input { resize: vertical; min-height: 6rem; }
 .empty--flat { background: transparent; border: 0; padding: var(--s5) 0; }
 .empty p:last-child { margin-bottom: 0; }
 
-/* ---------- Chips de filtro ---------- */
 .chip {
   min-height: 40px;
   padding: 0 var(--s4);
@@ -179,11 +171,9 @@ textarea.input { resize: vertical; min-height: 6rem; }
   box-shadow: var(--glow);
 }
 
-/* ---------- Quantidade ---------- */
 .qty { display: inline-flex; align-items: center; gap: var(--s2); }
 .qty__value { min-width: 2.5ch; text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 1.0625rem; }
 
-/* ---------- Gaveta (carrinho) e modal ---------- */
 .drawer {
   margin: 0 0 0 auto;
   padding: 0;
@@ -229,7 +219,6 @@ textarea.input { resize: vertical; min-height: 6rem; }
 .totals dt { color: var(--text-2); }
 .totals dd { margin: 0; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; color: var(--accent); text-shadow: var(--glow-sm); font-variant-numeric: tabular-nums; }
 
-/* ---------- Banner de cookies ---------- */
 .cookie {
   position: fixed;
   z-index: 60;
@@ -253,7 +242,6 @@ textarea.input { resize: vertical; min-height: 6rem; }
 .cookie__panel { display: grid; gap: var(--s3); margin-bottom: var(--s4); padding: var(--s4); background: var(--surface-raised); border-radius: var(--r-md); }
 .cookie__actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
 
-/* ---------- Tabelas ---------- */
 .table-wrap { overflow-x: auto; margin-bottom: var(--s5); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); }
 .table-wrap:focus-visible { outline-offset: 0; }
 .table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
@@ -264,14 +252,12 @@ textarea.input { resize: vertical; min-height: 6rem; }
 .table tbody tr:last-child > * { border-bottom: 0; }
 .table tbody th { font-weight: 600; }
 
-/* Campos pendentes de preenchimento pelo proprietario */
 .placeholder {
   color: var(--warn);
   border-bottom: 1px dashed var(--warn);
   font-weight: 600;
 }
 
-/* Interacoes: ondulacao ao clicar e deslocamento magnetico (js/fx.js) */
 .btn, .icon-btn, .chip { overflow: hidden; transition: translate 0.35s var(--ease-out), background-color var(--dur) var(--ease-out), color var(--dur), border-color var(--dur), box-shadow var(--dur) var(--ease-out), transform 0.15s var(--ease-out); }
 .ripple {
   position: absolute;

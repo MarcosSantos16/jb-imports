@@ -1,3 +1,4 @@
+// Liga os modulos da vitrine quando a pagina carrega.
 import { assinarProdutos } from './store-data.js';
 import { iniciarCatalogo, iniciarPainelEstoque } from './catalog-view.js';
 import { iniciarCarrinho } from './cart-view.js';
@@ -32,7 +33,6 @@ const catalogo = iniciarCatalogo({
 const carrinho = iniciarCarrinho({ obterProduto: (id) => produtos.get(id) });
 iniciarContato();
 
-// Mensagens de estado para leitores de tela quando o estoque muda ao vivo.
 function anunciarMudancas(mudancas) {
   mudancas.forEach(({ tipo, id, dados }) => {
     if (tipo !== 'modified') return;

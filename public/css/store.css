@@ -1,8 +1,5 @@
-/* Loja: hero, painel de estoque ao vivo, catalogo, carrinho e contato */
 
-/* ---------- Hero ---------- */
 .hero { position: relative; padding-block: var(--s7) var(--s8); overflow: hidden; }
-/* Halo verde animado atras do hero (movimento lento, desligado com reduced-motion) */
 .hero::before {
   content: "";
   position: absolute;
@@ -43,7 +40,6 @@
 .hero__lead { max-width: 46ch; margin-bottom: var(--s6); color: var(--text-2); font-size: 1.125rem; animation: title-in 0.9s 0.15s var(--ease-out) both; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: var(--s3); animation: title-in 0.9s 0.3s var(--ease-out) both; }
 
-/* ---------- Painel "Estoque agora" ---------- */
 .live-panel {
   position: relative;
   padding: var(--s5);
@@ -95,7 +91,6 @@
   100% { transform: none; }
 }
 
-/* ---------- Catalogo ---------- */
 .toolbar { display: grid; gap: var(--s4); margin-bottom: var(--s4); }
 .toolbar__filters { display: flex; flex-wrap: wrap; gap: var(--s2); }
 .toolbar__controls { display: grid; gap: var(--s3); }
@@ -119,7 +114,6 @@
   border-radius: var(--r-xl);
   transition: transform 0.35s var(--ease-out), border-color 0.35s, box-shadow 0.35s var(--ease-out);
 }
-/* Borda de luz neon que segue o cursor (via --mx/--my definidos em main.js) */
 .product::before {
   content: "";
   position: absolute;
@@ -157,7 +151,6 @@
 @media (prefers-reduced-motion: reduce) {
   .product__media::before { animation: none; opacity: 0.35; }
 }
-/* contain: a foto aparece inteira, sem cortar; o fundo escuro acomoda as laterais */
 .product__img { display: block; width: 100%; height: 100%; object-fit: contain; transition: transform 0.6s var(--ease-out); }
 .product:hover .product__img { transform: scale(1.03); }
 .product__body { position: relative; display: flex; flex: 1; flex-direction: column; gap: var(--s2); padding: var(--s5); }
@@ -180,7 +173,6 @@
 .product__price { margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
 .product .btn { margin-top: var(--s3); }
 
-/* ---------- Como comprar ---------- */
 .steps { display: grid; gap: var(--s5); margin: 0; padding: 0; list-style: none; counter-reset: passo; }
 @media (min-width: 880px) { .steps { grid-template-columns: repeat(3, 1fr); } }
 .steps__item {
@@ -192,7 +184,6 @@
   transition: border-color var(--dur), box-shadow var(--dur);
 }
 .steps__item:hover { border-color: rgb(118 255 3 / 0.5); box-shadow: var(--glow-sm); }
-/* Numero no fluxo normal: nunca sobrepoe o titulo */
 .steps__item::before {
   content: counter(passo);
   display: block;
@@ -206,7 +197,6 @@
 .steps__title { margin-bottom: var(--s2); font-size: 1.125rem; font-weight: 700; }
 .steps__item p { margin: 0; color: var(--text-2); }
 
-/* ---------- Procedencia ---------- */
 .defs { display: grid; gap: var(--s4); margin: 0; }
 @media (min-width: 768px) { .defs { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1100px) { .defs { grid-template-columns: repeat(3, 1fr); } }
@@ -221,7 +211,6 @@
 .defs dt { margin-bottom: var(--s2); font-weight: 700; color: var(--accent); }
 .defs dd { margin: 0; color: var(--text-2); font-size: 0.9375rem; }
 
-/* ---------- Carrinho ---------- */
 .cart-btn { position: relative; }
 .cart-btn__count {
   min-width: 1.5rem;
@@ -245,7 +234,6 @@
 .cart-line__actions { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
 .cart-line--off .cart-line__name { color: var(--text-2); }
 
-/* ---------- Contato ---------- */
 .contact { display: grid; gap: var(--s7); }
 @media (min-width: 960px) { .contact { grid-template-columns: 1.3fr 0.7fr; gap: var(--s8); } }
 .contact__title { margin-bottom: var(--s4); font-size: 1.25rem; font-weight: 700; }
@@ -260,13 +248,11 @@
   border-radius: var(--r-xl);
 }
 
-/* Blocos de apoio */
 .hero__copy { position: relative; min-width: 0; }
 .contact__form { min-width: 0; }
 .cart-line__info { min-width: 0; }
 .stock__text { display: inline; }
 
-/* Miniaturas das fotos do produto (so aparecem com mais de uma foto) */
 .product__thumbs { display: flex; flex-wrap: wrap; gap: var(--s2); }
 .product__thumbs[hidden] { display: none; }
 .product__thumb {
@@ -285,7 +271,6 @@
 .product__thumb[aria-pressed="true"] { border-color: var(--accent); box-shadow: var(--glow-sm); }
 .product__thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* Fundo preto com uma linha verde neon em movimento, visivel so nas bordas da foto */
 .product__zoom {
   position: absolute;
   inset: 0;
@@ -302,7 +287,6 @@
 .product__zoom .product__img { object-fit: contain; }
 .product:hover .product__zoom .product__img { transform: scale(1.03); }
 
-/* Visor de fotos do produto */
 .visor {
   width: min(960px, calc(100vw - 2rem));
   max-height: calc(100vh - 2rem);

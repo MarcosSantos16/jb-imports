@@ -1,10 +1,4 @@
-// Consentimento de cookies (LGPD) + Google Analytics 4 com Consent Mode v2.
-//
-// Regras:
-//  1. Por padrao tudo que nao e essencial fica NEGADO (consent default = denied).
-//  2. O script do Google Analytics so e baixado depois do aceite explicito.
-//  3. Recusar tem o mesmo destaque que aceitar, e a escolha pode ser mudada
-//     a qualquer momento pelo botao "Preferencias de cookies" do rodape.
+// Consentimento de cookies e carregamento do Google Analytics so apos o aceite.
 import { GA_MEASUREMENT_ID, POLICY_VERSION, isPlaceholder } from './config.js';
 
 const CHAVE = 'jb_consent_v1';
@@ -14,7 +8,6 @@ function gtag() {
   window.dataLayer.push(arguments);
 }
 
-// Consent Mode v2: estado inicial negado para todas as finalidades.
 gtag('consent', 'default', {
   ad_storage: 'denied',
   ad_user_data: 'denied',
@@ -39,7 +32,6 @@ function gravarEscolha(analiticos) {
       JSON.stringify({ politica: POLICY_VERSION, analiticos, em: new Date().toISOString() })
     );
   } catch (e) {
-    /* sem armazenamento: o banner reaparece na proxima visita */
   }
 }
 

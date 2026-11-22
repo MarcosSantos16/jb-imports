@@ -1,6 +1,4 @@
-// Auxiliares de DOM. Todo texto entra por textContent/createTextNode,
-// nunca por innerHTML, para impedir injecao de HTML vinda do banco de dados.
-
+// Funcoes para criar elementos na pagina sem risco de injecao de HTML.
 export function h(tag, props = {}, ...filhos) {
   const el = document.createElement(tag);
   for (const [chave, valor] of Object.entries(props)) {
@@ -18,7 +16,6 @@ export function h(tag, props = {}, ...filhos) {
   return el;
 }
 
-// Icone vetorial a partir do sprite inline (#i-nome) presente em todas as paginas.
 export function icon(nome, classe = 'icon') {
   const NS = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(NS, 'svg');
@@ -31,7 +28,6 @@ export function icon(nome, classe = 'icon') {
   return svg;
 }
 
-// Anuncia mudancas para leitores de tela (regiao aria-live da pagina).
 let timer;
 export function announce(mensagem) {
   const regiao = document.getElementById('live-region');

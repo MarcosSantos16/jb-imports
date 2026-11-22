@@ -1,8 +1,4 @@
-// Configuracao publica do front-end.
-// Os valores do Firebase Web NAO sao segredos (a seguranca esta em firestore.rules),
-// mas precisam ser preenchidos com os dados do seu projeto.
-// Enquanto houver "PREENCHER", a loja mostra um aviso em vez do catalogo.
-
+// Configuracoes publicas do site: Firebase, WhatsApp e Google Analytics.
 export const FIREBASE_SDK_VERSION = '10.14.1';
 
 export const FIREBASE_CONFIG = {
@@ -14,13 +10,10 @@ export const FIREBASE_CONFIG = {
   messagingSenderId: "1042733273937",
 };
 
-// ID de medicao do Google Analytics 4 (formato G-XXXXXXXXXX).
-// So e carregado depois que o visitante aceita os cookies analiticos.
 export const GA_MEASUREMENT_ID = 'G-PREENCHER';
 
 export const WHATSAPP_NUMBER = '5581984543444';
 
-// Versao do texto da Politica de Privacidade. Alterar reabre o banner de cookies.
 export const POLICY_VERSION = '2026-11-18';
 
 export const isPlaceholder = (valor) => !valor || String(valor).includes('PREENCHER');

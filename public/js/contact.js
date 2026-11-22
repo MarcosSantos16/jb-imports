@@ -1,5 +1,4 @@
 // Formulario de contato: monta a mensagem e abre o WhatsApp.
-// Nenhum dado e enviado ou armazenado em nossos servidores (coleta minima).
 import { waUrl, telefoneValido, formatarTelefone } from './whatsapp.js';
 
 export function iniciarContato() {

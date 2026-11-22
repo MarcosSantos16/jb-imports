@@ -1,8 +1,5 @@
+// Regras do catalogo no servidor (copia espelhada no navegador).
 'use strict';
-
-// Fonte unica de regras do catalogo no servidor.
-// Existe uma copia espelhada para o navegador em public/js/catalog.js:
-// ao alterar categorias ou limites, altere os dois arquivos.
 
 const CATEGORIAS = [
   { id: 'iphones', nome: 'iPhones', ordem: 1 },
@@ -14,12 +11,10 @@ const CATEGORIAS = [
 
 const CONDICOES = ['novo', 'seminovo', 'reposicao'];
 
-// Procedencia declarada de cada item (evita alegacao enganosa de "100% original").
 const PROCEDENCIAS = ['original', 'compativel', 'retirada-usada'];
 
 const LIMITE_ULTIMAS_UNIDADES = 3;
 
-// Versao do texto da Politica de Privacidade aceita no pedido (registro de consentimento).
 const POLITICA_VERSAO = '2026-11-18';
 
 function disponibilidade(estoque) {

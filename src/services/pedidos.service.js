@@ -1,3 +1,4 @@
+// Regras dos pedidos: estoque, valores e situacao.
 'use strict';
 
 const { db, FieldValue } = require('../config/firebase');
@@ -14,7 +15,6 @@ function normalizarTelefone(valor) {
   return null;
 }
 
-// Valida o corpo do pedido. Coleta minima: nome, WhatsApp e itens.
 function validar(corpo) {
   const erros = [];
   const nome = typeof corpo.cliente?.nome === 'string' ? corpo.cliente.nome.trim() : '';
@@ -47,8 +47,6 @@ function validar(corpo) {
   };
 }
 
-// Reserva o estoque e registra o pedido na mesma transacao: ou acontece tudo, ou nada.
-// Os precos vem do banco, nunca do navegador.
 async function criarPedido(corpo) {
   const { cliente, itens } = validar(corpo);
   const firestore = db();
@@ -134,7 +132,6 @@ async function listar() {
   });
 }
 
-// Conclui ou cancela um pedido reservado. Cancelar devolve as unidades ao estoque.
 async function atualizarStatus(id, status) {
   if (!['concluido', 'cancelado'].includes(status)) {
     throw new AppError(400, 'DADOS_INVALIDOS', 'Status inválido.');
@@ -165,8 +162,6 @@ async function atualizarStatus(id, status) {
   return { id, status };
 }
 
-// Atende pedidos de exclusão de dados (LGPD, art. 18): remove nome e WhatsApp
-// e mantém apenas os dados do pedido necessários para obrigações legais.
 async function anonimizar(id) {
   const ref = db().collection(COLECAO).doc(id);
   const snap = await ref.get();

@@ -1,3 +1,4 @@
+// Regras dos produtos: validacao, fotos e estoque.
 'use strict';
 
 const { db, FieldValue } = require('../config/firebase');
@@ -7,12 +8,8 @@ const { CATEGORIAS, CONDICOES, PROCEDENCIAS, disponibilidade } = require('../con
 const COLECAO = 'produtos';
 const MAX_FOTOS = 8;
 
-// Aceita qualquer link https de imagem (Cloudinary ou outro host). Que o link seja
-// de fato uma imagem e conferido no navegador do administrador antes de salvar.
-// Foto enviada do computador vai dentro do produto como WebP em base64 (sem servico externo).
-// O documento do Firestore tem limite de 1 MiB, por isso ha teto por foto e por produto.
 const FOTO_LOCAL = /^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+/]+=*$/;
-const LIMITE_CHARS_FOTO = 90000; // 60 KB em base64, com folga
+const LIMITE_CHARS_FOTO = 90000;
 const LIMITE_CHARS_FOTOS = 800000;
 
 function urlImagemValida(v) {
@@ -26,8 +23,6 @@ function urlImagemValida(v) {
 
 const totalCharsFotos = (lista) => lista.reduce((s, v) => s + (v.startsWith('data:') ? v.length : 0), 0);
 
-// Valida e normaliza os dados de um produto.
-// parcial = true: apenas os campos enviados sao validados (PATCH).
 function validar(dados, parcial) {
   const d = dados && typeof dados === 'object' ? dados : {};
   const out = {};
@@ -78,7 +73,6 @@ function validar(dados, parcial) {
     else erros.push('Ativo: use verdadeiro ou falso.');
   }
 
-  // Galeria: a primeira foto e a principal (exibida na vitrine). imagemUrl espelha a principal.
   if (d.imagens !== undefined) {
     if (!Array.isArray(d.imagens) || d.imagens.length > MAX_FOTOS) {
       erros.push(`Fotos: envie uma lista de até ${MAX_FOTOS} links.`);
@@ -136,8 +130,6 @@ async function atualizar(id, dados) {
   return { id, ...alteracoes };
 }
 
-// Incremento/decremento atomico: dois administradores clicando ao mesmo tempo
-// nunca sobrescrevem um ao outro e o estoque nunca fica negativo.
 async function ajustarEstoque(id, delta) {
   if (!Number.isInteger(delta) || delta === 0 || Math.abs(delta) > 999) {
     throw new AppError(400, 'DADOS_INVALIDOS', 'Ajuste de estoque inválido.');
@@ -159,7 +151,6 @@ async function excluir(id) {
   const ref = db().collection(COLECAO).doc(id);
   const snap = await ref.get();
   if (!snap.exists) throw new AppError(404, 'NAO_ENCONTRADO', 'Produto não encontrado.');
-  // Pedidos antigos guardam nome e preço do item, então continuam legíveis.
   await ref.delete();
 }
 

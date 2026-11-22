@@ -1,3 +1,4 @@
+// Junta as rotas da API em um unico roteador.
 'use strict';
 
 const { Router } = require('express');

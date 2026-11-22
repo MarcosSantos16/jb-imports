@@ -1,9 +1,8 @@
+// Conecta o servidor ao Firebase Admin (banco e autenticacao).
 'use strict';
 
 const admin = require('firebase-admin');
 
-// Inicializacao preguicosa: o servidor sobe mesmo sem credenciais
-// (a rota /api/health continua funcionando) e so falha quando o banco e usado.
 function app() {
   if (admin.apps.length) return admin.app();
 

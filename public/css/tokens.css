@@ -1,46 +1,36 @@
-/* Tokens de design da JB Imports — Dark Tech / Warp Gradients.
-   Todas as combinacoes texto/fundo foram validadas para WCAG AA (npm run check).
-   Paleta inspirada em poster Warp Gradients: preto profundo + verde neon intenso. */
 :root {
   color-scheme: dark;
 
-  /* Superficies */
   --bg: #0a0a0a;
   --surface: #141414;
   --surface-raised: #181818;
   --border: #262626;
   --border-control: #3a3a3a;
 
-  /* Verde neon — a cor principal da marca */
   --accent: #76ff03;
   --accent-strong: #9bff4d;
   --accent-press: #57c900;
   --accent-dim: rgb(118 255 3 / 0.12);
   --on-accent: #0a0a0a;
 
-  /* Glow progressivo: sutil em repouso, intenso no hover/foco */
   --glow-sm:  0 0 8px  rgb(118 255 3 / 0.40);
   --glow:     0 0 20px rgb(118 255 3 / 0.55), 0 0 40px rgb(118 255 3 / 0.20);
   --glow-lg:  0 0 30px rgb(118 255 3 / 0.70), 0 0 70px rgb(118 255 3 / 0.30), 0 0 120px rgb(118 255 3 / 0.10);
   --glow-btn: 0 0 0 1px rgb(118 255 3 / 0.5), var(--glow);
 
-  /* Gradiente warp — fundo vivo nos heroes */
   --grad-warp: radial-gradient(ellipse 80% 60% at 50% 40%, rgb(29 90 2 / 0.55) 0%, transparent 70%),
                radial-gradient(ellipse 50% 80% at 20% 70%, rgb(10 50 1 / 0.40) 0%, transparent 60%),
                radial-gradient(ellipse 60% 40% at 80% 20%, rgb(20 70 2 / 0.35) 0%, transparent 55%);
   --grad-card: linear-gradient(135deg, rgb(118 255 3 / 0.06) 0%, transparent 50%);
   --grad-hero-text: linear-gradient(135deg, #ffffff 0%, #d1d5db 60%, #76ff03 100%);
 
-  /* Texto */
   --text: #ffffff;
   --text-2: #c8cdd5;
   --text-3: #8a8f99;
 
-  /* Estados */
   --warn: #fbbf24;
   --danger: #ff6b6b;
 
-  /* Raios hierarquicos */
   --r-sm: 6px;
   --r-md: 10px;
   --r-lg: 14px;
@@ -48,7 +38,6 @@
   --r-2xl: 28px;
   --r-pill: 999px;
 
-  /* Espacamento (base 4px) */
   --s1: 4px;
   --s2: 8px;
   --s3: 12px;
@@ -58,12 +47,10 @@
   --s7: 48px;
   --s8: 80px;
 
-  /* Tipografia: sistema (zero fontes externas = zero dados a terceiros) */
   --font-display: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-body:    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono:    ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Transicoes padrao */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur: 220ms;
 

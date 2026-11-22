@@ -1,9 +1,8 @@
+// Limita requisicoes por IP para reduzir abuso casual.
 'use strict';
 
 const { AppError } = require('./errors');
 
-// Limitador simples em memoria. Em Serverless cada instancia tem a propria
-// memoria, entao ele reduz abuso casual, mas nao substitui um WAF.
 function rateLimit({ windowMs, max }) {
   const hits = new Map();
 

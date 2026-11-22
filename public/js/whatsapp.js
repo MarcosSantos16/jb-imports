@@ -1,3 +1,4 @@
+// Monta o link do WhatsApp e valida o telefone.
 import { WHATSAPP_NUMBER } from './config.js';
 import { formatBRL, CONDICAO_LABEL } from './catalog.js';
 
@@ -11,14 +12,11 @@ export function formatarTelefone(digitos) {
   return d;
 }
 
-// Valida telefone brasileiro (DDD + numero). Aceita o prefixo 55 opcional.
 export function telefoneValido(valor) {
   const d = String(valor).replace(/\D/g, '');
   return /^(55)?\d{10,11}$/.test(d);
 }
 
-// Resumo estruturado do pedido, montado a partir da resposta do servidor
-// (precos e nomes confirmados no banco de dados).
 export function mensagemPedido(pedido) {
   const linhas = pedido.itens.map(
     (i) =>

@@ -1,6 +1,6 @@
+// Rotas de produtos do painel administrativo.
 'use strict';
 
-// Montado em /api/admin/produtos (todas as rotas exigem administrador).
 const { Router } = require('express');
 const { asyncHandler } = require('../middleware/errors');
 const c = require('../controllers/produtos.controller');

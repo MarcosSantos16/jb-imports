@@ -1,10 +1,5 @@
 #!/usr/bin/env node
-/**
- * check-project.mjs
- * Verificacoes automatizadas do projeto JB Imports
- * Checa: zero emojis, arquivos obrigatorios, placeholders legais, build.
- */
-
+// Verificacoes automaticas: arquivos, emojis, placeholders e contraste.
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
@@ -19,7 +14,6 @@ function pass(msg) { console.log(`  OK  ${msg}`); ok++; }
 function fail(msg) { console.error(`  FALHA  ${msg}`); erros.push(msg); }
 function warn(msg) { console.warn(`  AVISO  ${msg}`); avisos.push(msg); }
 
-// --- helpers ---
 function listarArquivos(dir, exts = []) {
   const resultado = [];
   if (!fs.existsSync(dir)) return resultado;
@@ -32,7 +26,6 @@ function listarArquivos(dir, exts = []) {
   return resultado;
 }
 
-// --- 1. Arquivos obrigatorios ---
 console.log('\n=== 1. Arquivos Obrigatorios ===');
 const obrigatorios = [
   'package.json', 'vercel.json', '.env.example', '.gitignore',
@@ -58,9 +51,7 @@ for (const f of obrigatorios) {
   else fail(`Arquivo ausente: ${f}`);
 }
 
-// --- 2. Zero emojis ---
 console.log('\n=== 2. Verificacao de Emojis (RF18) ===');
-// Regex para blocos Unicode de emojis
 const EMOJI_RE = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}\u{1F100}-\u{1F1FF}\u{FE00}-\u{FE0F}]/u;
 const arquivosTexto = listarArquivos(ROOT, ['.html','.css','.js','.mjs','.json','.md','.txt','.rules'])
   .filter(f => !f.includes('node_modules') && !f.includes('.git'));
@@ -78,7 +69,6 @@ for (const f of arquivosTexto) {
 }
 if (totalEmoji === 0) pass('Nenhum emoji encontrado em ' + arquivosTexto.length + ' arquivos');
 
-// --- 3. Placeholders legais ---
 console.log('\n=== 3. Placeholders Legais ===');
 const placeholders = ['[PREENCHER]'];
 const pagesHTML = listarArquivos(path.join(ROOT,'public'), ['.html']);
@@ -89,7 +79,6 @@ for (const f of pagesHTML) {
 }
 pass('Verificacao de placeholders concluida (avisos sao esperados ate o proprietario preencher)');
 
-// --- 4. Cores obrigatorias nos tokens ---
 console.log('\n=== 4. Tokens de Cores ===');
 const tokens = fs.readFileSync(path.join(ROOT,'public/css/tokens.css'),'utf8');
 const coresObrig = { '--bg':'#0a0a0a', '--surface':'#141414', '--border':'#262626', '--accent':'#76ff03' };
@@ -98,10 +87,7 @@ for (const [token, hex] of Object.entries(coresObrig)) {
   else fail(`Token ${token} com valor ${hex} nao encontrado em tokens.css`);
 }
 
-// --- 5. Contraste WCAG AA (verificacao basica estatica) ---
 console.log('\n=== 5. Contraste WCAG AA (verificacao estatica) ===');
-// Verde neon #76FF03 sobre preto #0A0A0A: luminancia relativa
-// L(verde)= 0.2126*R + 0.7152*G + 0.0722*B (linearizado)
 function lin(c) { const v=c/255; return v<=0.04045 ? v/12.92 : Math.pow((v+0.055)/1.055,2.4); }
 function lum([r,g,b]) { return 0.2126*lin(r)+0.7152*lin(g)+0.0722*lin(b); }
 function contraste(l1,l2) { const [a,b]=[Math.max(l1,l2),Math.min(l1,l2)]; return (a+0.05)/(b+0.05); }
@@ -117,7 +103,6 @@ for (const { nome, c1, c2 } of pares) {
   else fail(`${nome} -> ${ratio.toFixed(2)}:1 (abaixo de 4.5:1!)`);
 }
 
-// --- 6. Robots.txt ---
 console.log('\n=== 6. robots.txt ===');
 const robots = fs.readFileSync(path.join(ROOT,'public/robots.txt'),'utf8');
 if (robots.includes('Disallow: /admin')) pass('Admin bloqueado no robots.txt');
@@ -125,7 +110,6 @@ else fail('robots.txt nao bloqueia /admin');
 if (robots.includes('Disallow: /api')) pass('API bloqueada no robots.txt');
 else fail('robots.txt nao bloqueia /api');
 
-// --- Resumo ---
 console.log('\n=== RESUMO ===');
 console.log(`  Verificacoes OK:    ${ok}`);
 console.log(`  Erros:              ${erros.length}`);

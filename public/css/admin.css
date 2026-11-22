@@ -1,4 +1,3 @@
-/* Painel administrativo (restrito) */
 .admin { padding-block: var(--s6) var(--s8); }
 
 .auth-card {
@@ -30,11 +29,9 @@
 .plain-list { margin: 0; padding: 0; list-style: none; }
 .plain-list li { margin: 0; }
 
-/* Estado ativo/inativo: cor + texto (nunca so cor) */
 .table .badge[data-ativo="true"] { border-color: var(--accent); color: var(--accent); }
 .table .badge[data-ativo="false"] { border-color: var(--border-control); color: var(--text-3); }
 
-/* ---------- Foto do produto: URL ou arquivo do computador ---------- */
 .imagem-campo { border: 0; padding: 0; margin: 0 0 var(--s4); min-width: 0; }
 .field__legend { display: block; margin-bottom: var(--s2); font-size: 0.9375rem; font-weight: 600; }
 
@@ -82,11 +79,9 @@
 .field .segmento__opcao { display: inline-flex; margin: 0; }
 .field .segmento__opcao span { margin: 0; font-size: 0.875rem; font-weight: 600; }
 
-/* Campo de link com botao ao lado */
 .campo-linha { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
 .campo-linha .input { flex: 1 1 14rem; min-width: 0; }
 
-/* Galeria de fotos do produto (a primeira e a principal) */
 .galeria-controle { margin-top: var(--s3); }
 .galeria {
   list-style: none;

@@ -1,7 +1,6 @@
+// Inicia o servidor para uso local e para hospedagem Node.js.
 'use strict';
 
-// Ponto de entrada para uso local e para hospedagem Node.js (Hostinger).
-// Na Vercel este arquivo nao e usado: la o arquivo api/index.js assume o papel.
 const path = require('path');
 const express = require('express');
 const app = require('./src/app');
