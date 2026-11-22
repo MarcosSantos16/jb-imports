@@ -133,7 +133,7 @@ PORT=3000
 
 Edite o arquivo com as credenciais Web SDK obtidas na Parte 1.8.
 
-O bloco `CLOUDINARY` do mesmo arquivo nao e mais necessario: as fotos nao precisam de conta externa (ver Parte 5).
+As fotos nao precisam de conta externa; nao ha mais configuracao de Cloudinary (ver Parte 5).
 
 ### 2.6 Build das Paginas HTML
 

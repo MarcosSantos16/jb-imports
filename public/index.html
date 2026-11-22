@@ -3,12 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JB Imports | iPhones, peças e acessórios em Boa Viagem, Recife</title>
-<meta name="description" content="Loja de eletrônicos e produtos Apple em Boa Viagem, Recife. iPhones novos e seminovos, displays, baterias, cabos, fontes e fones, com procedência declarada e estoque em tempo real.">
+<title>JB Imports | iPhones e acessórios em Boa Viagem, Recife</title>
+<meta name="description" content="iPhones novos e seminovos, displays, baterias, cabos, fontes e fones em Boa Viagem, Recife. Procedência declarada e estoque em tempo real.">
 <meta name="robots" content="index,follow">
+<link rel="canonical" href="https://jb-imports-pi.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="JB Imports">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="JB Imports | iPhones e acessórios em Boa Viagem, Recife">
+<meta property="og:description" content="iPhones novos e seminovos, displays, baterias, cabos, fontes e fones em Boa Viagem, Recife. Procedência declarada e estoque em tempo real.">
+<meta property="og:url" content="https://jb-imports-pi.vercel.app/">
+<meta property="og:image" content="https://jb-imports-pi.vercel.app/img/og-jb-imports.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="JB Imports: iPhones, peças e acessórios em Boa Viagem, Recife">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="JB Imports | iPhones e acessórios em Boa Viagem, Recife">
+<meta name="twitter:description" content="iPhones novos e seminovos, displays, baterias, cabos, fontes e fones em Boa Viagem, Recife. Procedência declarada e estoque em tempo real.">
+<meta name="twitter:image" content="https://jb-imports-pi.vercel.app/img/og-jb-imports.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://jb-imports-pi.vercel.app/#site","url":"https://jb-imports-pi.vercel.app/","name":"JB Imports","inLanguage":"pt-BR"},{"@type":"WebPage","@id":"https://jb-imports-pi.vercel.app/#pagina","url":"https://jb-imports-pi.vercel.app/","name":"JB Imports | iPhones e acessórios em Boa Viagem, Recife","description":"iPhones novos e seminovos, displays, baterias, cabos, fontes e fones em Boa Viagem, Recife. Procedência declarada e estoque em tempo real.","inLanguage":"pt-BR","isPartOf":{"@id":"https://jb-imports-pi.vercel.app/#site"}},{"@type":"ElectronicsStore","@id":"https://jb-imports-pi.vercel.app/#loja","name":"JB Imports","url":"https://jb-imports-pi.vercel.app/","description":"iPhones novos e seminovos, displays, baterias, cabos, fontes e fones em Boa Viagem, Recife. Procedência declarada e estoque em tempo real.","image":"https://jb-imports-pi.vercel.app/img/og-jb-imports.jpg","telephone":"+55 81 98454-3444","address":{"@type":"PostalAddress","streetAddress":"Rua do Atlântico, 69","addressLocality":"Recife","addressRegion":"PE","addressCountry":"BR"},"areaServed":{"@type":"City","name":"Recife"}}]}</script>
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0a0a0a">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.cloudinary.com https://www.gstatic.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com; frame-src https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googletagmanager.com; style-src 'self'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://www.gstatic.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com; frame-src https://*.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/css/tokens.css">
 <link rel="stylesheet" href="/css/base.css">
@@ -21,7 +37,7 @@
 <a class="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
 <canvas class="fx-dots" aria-hidden="true"></canvas>
 <section id="cookie-banner" class="cookie" role="region" aria-labelledby="cookie-title" hidden>
-  <h2 id="cookie-title" class="cookie__title" tabindex="-1" data-cookie-title>Cookies e privacidade</h2>
+  <p id="cookie-title" class="cookie__title" tabindex="-1" data-cookie-title>Cookies e privacidade</p>
   <p class="cookie__text">
     Usamos armazenamento essencial para o carrinho e para lembrar sua escolha. Cookies analíticos (Google Analytics 4) só são ativados se você permitir. Detalhes na <a href="/privacidade.html#cookies">Política de Privacidade</a>.
   </p>
@@ -110,7 +126,13 @@
         <h2 id="live-title" class="live-panel__title">Estoque agora</h2>
         <p class="live-panel__time"><span class="live-dot" aria-hidden="true"></span><span id="live-status">Conectando</span></p>
       </div>
-      <ul id="live-list" class="live-list"></ul>
+      <ul id="live-list" class="live-list">
+        <li class="live-list__row" data-cat="iphones"><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg><span class="live-list__name">iPhones</span><span class="live-list__detail">Carregando</span><span class="live-list__value">-</span></li>
+        <li class="live-list__row" data-cat="displays"><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="#i-display"/></svg><span class="live-list__name">Displays e telas</span><span class="live-list__detail">Carregando</span><span class="live-list__value">-</span></li>
+        <li class="live-list__row" data-cat="baterias"><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="#i-battery"/></svg><span class="live-list__name">Baterias</span><span class="live-list__detail">Carregando</span><span class="live-list__value">-</span></li>
+        <li class="live-list__row" data-cat="cabos-fontes"><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="#i-cable"/></svg><span class="live-list__name">Cabos e fontes</span><span class="live-list__detail">Carregando</span><span class="live-list__value">-</span></li>
+        <li class="live-list__row" data-cat="fones"><svg class="icon icon--lg" aria-hidden="true" focusable="false"><use href="#i-headphones"/></svg><span class="live-list__name">Fones</span><span class="live-list__detail">Carregando</span><span class="live-list__value">-</span></li>
+      </ul>
       <p class="live-panel__note">Unidades disponíveis por categoria. O painel muda sozinho quando o estoque é alterado.</p>
     </section>
   </div>

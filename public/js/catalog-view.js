@@ -212,16 +212,25 @@ export function iniciarCatalogo({ grade, filtros, selectCondicao, busca, contage
 }
 
 // Painel do topo: unidades disponiveis por categoria, calculadas dos dados reais.
+// As linhas ja vem no HTML (com a mesma altura final), para o painel nao crescer
+// depois do carregamento e empurrar o conteudo abaixo (CLS). Sem linhas no HTML,
+// elas sao criadas aqui.
 export function iniciarPainelEstoque({ lista, status }) {
   const linhas = new Map();
   CATEGORIAS.forEach((c) => {
-    const valor = h('span', { class: 'live-list__value' }, '-');
-    const detalhe = h('span', { class: 'live-list__detail' }, 'Carregando');
-    linhas.set(c.id, { valor, detalhe });
-    lista.append(h('li', { class: 'live-list__row' },
-      icon(c.icone, 'icon icon--lg'),
-      h('span', { class: 'live-list__name' }, c.nome),
-      detalhe, valor));
+    let linha = lista.querySelector(`[data-cat="${c.id}"]`);
+    if (!linha) {
+      linha = h('li', { class: 'live-list__row', dataset: { cat: c.id } },
+        icon(c.icone, 'icon icon--lg'),
+        h('span', { class: 'live-list__name' }, c.nome),
+        h('span', { class: 'live-list__detail' }, 'Carregando'),
+        h('span', { class: 'live-list__value' }, '-'));
+      lista.append(linha);
+    }
+    linhas.set(c.id, {
+      valor: linha.querySelector('.live-list__value'),
+      detalhe: linha.querySelector('.live-list__detail'),
+    });
   });
 
   return {
