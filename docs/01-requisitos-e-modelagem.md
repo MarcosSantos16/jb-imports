@@ -31,6 +31,7 @@ Versao: 1.0 | Data: 2026-11-19
 - RF-04.1 Tela de login protegida por Firebase Authentication (e-mail/senha).
 - RF-04.2 Verificar uid do admin na colecao `admins` apos login.
 - RF-04.3 CRUD completo de produtos (criar, editar, ativar/desativar, excluir).
+- RF-04.4 Galeria de fotos por produto: ate 8 fotos, com foto principal (primeira da lista), abrir, remover e reordenar pela principal.
 - RF-04.4 Controle rapido de estoque com botoes +/- diretamente na listagem.
 - RF-04.5 Listagem de pedidos com acoes: Concluir, Cancelar (restaura estoque) e Anonimizar (LGPD).
 - RF-04.6 Logout que encerra sessao Firebase.
@@ -57,7 +58,7 @@ Versao: 1.0 | Data: 2026-11-19
 ### RNF-02 Disponibilidade e Custo Zero
 - Hospedagem: Vercel Hobby (gratuito) com exportacao para Hostinger Node.js sem reescrita.
 - Banco de dados: Firebase Spark (gratuito) — Firestore + Authentication.
-- Armazenamento de imagens: URLs externas (Cloudinary gratuito), sem Firebase Storage.
+- Armazenamento de imagens: fotos enviadas do computador sao reduzidas no navegador (WebP, ate 60 KB) e gravadas no proprio produto no Firestore; tambem aceita links https externos. Sem Firebase Storage e sem Cloudinary obrigatorio.
 - Infraestrutura: 100% gratuita na fase inicial.
 
 ### RNF-03 Seguranca
@@ -110,7 +111,8 @@ FIRESTORE DATABASE
 |       preco:         number        Ex: 3499.90 (em reais)
 |       estoque:       number        Ex: 5 (inteiro >= 0)
 |       disponibilidade: string      "em-estoque" | "ultimas-unidades" | "esgotado"
-|       imagemUrl:     string | null URL https:// de imagem externa (Cloudinary etc.)
+|       imagens:       array         Ate 8 fotos: URL https:// ou foto local data:image/webp;base64 (max. 60 KB cada, 800 KB no total)
+|       imagemUrl:     string | null Foto principal (primeira de imagens), mantida por compatibilidade
 |       ativo:         boolean       true = visivel na loja; false = oculto
 |       criadoEm:      timestamp     serverTimestamp() na criacao
 |       atualizadoEm:  timestamp     serverTimestamp() em cada update

@@ -133,6 +133,8 @@ PORT=3000
 
 Edite o arquivo com as credenciais Web SDK obtidas na Parte 1.8.
 
+O bloco `CLOUDINARY` do mesmo arquivo nao e mais necessario: as fotos nao precisam de conta externa (ver Parte 5).
+
 ### 2.6 Build das Paginas HTML
 
 ```bash
@@ -268,26 +270,46 @@ Apos o primeiro deploy:
 
 ---
 
-## PARTE 5 — GESTAO DE IMAGENS (Cloudinary — Gratuito)
+## PARTE 5 — GESTAO DE IMAGENS (Gratuito, sem Cloudinary)
 
-### 5.1 Criar Conta no Cloudinary
+As fotos dos produtos podem entrar de duas formas. Nenhuma exige conta em servico externo.
 
-1. Acesse https://cloudinary.com e crie uma conta gratuita
-2. O plano gratuito oferece 25 GB de armazenamento e 25 GB de transferencia/mes
+### 5.1 Foto do Computador (recomendado)
 
-### 5.2 Fazer Upload de Imagens
+1. No painel admin, edite o produto e escolha "Enviar do computador".
+2. Selecione uma foto JPG, PNG ou WebP de ate 8 MB.
+3. O navegador reduz a foto automaticamente: lado maior de ate 900 px, em WebP, com no maximo 60 KB. Se nao couber, diminui um pouco mais.
+4. A foto entra na galeria do produto. Clique em "Salvar produto" para gravar.
 
-1. No dashboard do Cloudinary, va em "Media Library"
-2. Clique em "Upload" e envie as fotos dos produtos
-3. Apos o upload, clique na imagem e copie a "URL segura" (https://res.cloudinary.com/...)
+A foto fica gravada dentro do documento do produto no Firestore, no campo `imagens`, em base64. Limites:
+- 60 KB por foto e 8 fotos por produto.
+- Cerca de 800 KB por produto, porque o Firestore aceita no maximo 1 MiB por documento.
+- O servidor aceita pedidos de ate 1 MB (limite do corpo JSON em `src/app.js`).
 
-### 5.3 Usar a URL no Produto
+### 5.2 Link de Imagem (https)
 
-No painel admin da JB Imports:
-- Ao cadastrar ou editar um produto
-- Cole a URL do Cloudinary no campo "URL da Imagem"
-- Voce pode otimizar adicionando transformacoes na URL:
-  `https://res.cloudinary.com/SEU_CLOUD/image/upload/w_600,f_auto,q_auto/nome-da-imagem`
+1. Escolha "Colar URL", cole o endereco direto da imagem (`https://...`) e clique em "Adicionar link".
+2. Qualquer site serve, inclusive um Cloudinary que voce ja use.
+3. Antes de entrar na lista, o admin confere no navegador se o link carrega uma imagem. Paginas HTML e links quebrados sao recusados.
+4. O site nao reduz fotos de outros sites. Se a imagem tiver mais de 2000 px, o admin avisa; nesse caso, prefira "Enviar do computador".
+
+Links do Cloudinary sao otimizados pelo site, sem alterar a foto original:
+- A vitrine entrega WebP no tamanho da tela (640 px no card e 160 px nas miniaturas).
+- O admin converte o link colado para WebP de 1200 px.
+
+### 5.3 Galeria do Produto (Admin)
+
+- A primeira foto e a principal, exibida no card da vitrine.
+- "Abrir foto" mostra a imagem em nova aba.
+- "Tornar principal" passa a foto para o primeiro lugar.
+- "Remover" tira a foto da lista. A mudanca so vale depois de "Salvar produto".
+
+### 5.4 Como a Foto Aparece na Vitrine
+
+- A foto aparece inteira, sem cortes, centralizada sobre um fundo preto. Nas bordas, uma linha verde neon se move em loop.
+- Clicar na foto abre o visor: foto inteira, zoom ("Ampliar" ou clique na foto), "Anterior" e "Proxima" (ou as setas do teclado) para trocar de foto, e Esc para fechar.
+- Quando o produto tem mais de uma foto, miniaturas aparecem abaixo da foto. Clicar numa miniatura troca a foto do card.
+- Se o sistema operacional pedir para reduzir movimento, a linha neon e as animacoes ficam paradas.
 
 ---
 
@@ -304,10 +326,22 @@ No painel admin da JB Imports:
    - **Descricao:** (descricao tecnica detalhada)
    - **Preco:** 3499.90
    - **Estoque:** 5
-   - **URL da Imagem:** (URL do Cloudinary)
+   - **Fotos:** envie uma foto pelo computador ("Enviar do computador") ou cole um link https ("Colar URL"). Veja a Parte 5.
    - **Ativo:** marcado (sim)
 5. Clique em "Salvar"
 6. O produto aparece imediatamente na loja (sem reload)
+
+---
+
+### 6.1 Problemas Comuns
+
+| Sintoma | Causa provavel | O que fazer |
+|---------|----------------|-------------|
+| "Corpo da requisicao grande demais" ao salvar | Servidor com limite antigo de 20 KB | Confirme que o deploy atual esta no ar (limite de 1 MB) |
+| Foto do computador nao entra na galeria | Foto muito detalhada para caber em 60 KB | Use uma foto menor ou com menos detalhes |
+| Link nao entra na lista | O endereco nao e a imagem direta, ou o site bloqueia | Abra o link no navegador: deve aparecer so a imagem. Ou use "Enviar do computador" |
+| Vitrine mostra "Foto real em breve" | Produto sem foto salva, ou foto que nao carrega | Abra o produto no admin e confira a galeria; clique em "Salvar produto" |
+| Animacoes nao aparecem no computador | Opcao "reduzir movimento" ligada no sistema | Windows: Configuracoes > Acessibilidade > Efeitos visuais > ative "Efeitos de animacao". Recarregue com Ctrl+F5 |
 
 ---
 
@@ -346,7 +380,7 @@ Apos editar, rode `npm run build` para regenerar as paginas HTML.
 - [ ] Teste de compra completo: adicionar ao carrinho > finalizar > WhatsApp abre corretamente
 - [ ] Dominio personalizado configurado (opcional)
 - [ ] Google Analytics 4 ID configurado em `public/js/consent.js` (campo `GA_ID`)
-- [ ] Imagens reais dos produtos enviadas ao Cloudinary e cadastradas nos produtos
+- [ ] Fotos reais dos produtos cadastradas na galeria (pelo computador ou por link https)
 - [ ] Verificar que banner de cookies aparece e bloqueia GA ate o aceite
 
 ---
@@ -384,9 +418,11 @@ jb-imports/
 |   |   +-- cart-view.js        # Gaveta do carrinho e fluxo de checkout
 |   |   +-- contact.js          # Formulario de contato (WhatsApp only)
 |   |   +-- main.js             # Inicializador e anuncio a11y de estoque
+|   |   +-- fx.js               # Efeitos: grade de pontos, cursor, botoes magneticos, revelacao ao rolar
 |   |   +-- lib/
 |   |   |   +-- dom.js          # Helpers: h(), icon(), announce(), semAcento()
 |   |   |   +-- firebase.js     # Inicializador lazy do Firebase Web SDK
+|   |   +-- imagem.js       # Otimizacao de URLs do Cloudinary (WebP no tamanho pedido)
 |   |   +-- admin/
 |   |       +-- admin.js        # Painel admin: auth, CRUD, pedidos
 |   |
