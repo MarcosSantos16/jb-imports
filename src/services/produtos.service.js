@@ -12,8 +12,21 @@ const FOTO_LOCAL = /^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+/]+=*$/;
 const LIMITE_CHARS_FOTO = 90000;
 const LIMITE_CHARS_FOTOS = 800000;
 
+const ASSINATURAS = {
+  'image/png': (b) => b.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])),
+  'image/jpeg': (b) => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff,
+  'image/webp': (b) => b.subarray(0, 4).toString('ascii') === 'RIFF' && b.subarray(8, 12).toString('ascii') === 'WEBP',
+};
+
+function conteudoEhImagem(v) {
+  const cabecalho = v.match(/^data:(image\/(?:webp|jpeg|png));base64,/);
+  if (!cabecalho) return false;
+  const inicio = Buffer.from(v.slice(cabecalho[0].length, cabecalho[0].length + 32), 'base64');
+  return ASSINATURAS[cabecalho[1]](inicio);
+}
+
 function urlImagemValida(v) {
-  if (v.startsWith('data:')) return v.length <= LIMITE_CHARS_FOTO && FOTO_LOCAL.test(v);
+  if (v.startsWith('data:')) return v.length <= LIMITE_CHARS_FOTO && FOTO_LOCAL.test(v) && conteudoEhImagem(v);
   try {
     return new URL(v).protocol === 'https:' && v.length <= 500;
   } catch (e) {

@@ -85,6 +85,11 @@ async function iniciarAuth() {
   const [app, fns] = await Promise.all([getApp(), loadAuth()]);
   authFns = fns;
   auth = fns.getAuth(app);
+  try {
+    await fns.setPersistence(auth, fns.browserSessionPersistence);
+  } catch (e) {
+    console.warn('Persistencia de sessao nao aplicada:', e.code || e.message);
+  }
   fns.onAuthStateChanged(auth, aoMudarSessao);
 }
 
