@@ -183,46 +183,6 @@ html.js .reveal {
     scale 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms);
 }
 
-/* ---------- Cursor suave (desktop com mouse; js/fx.js) ---------- */
-.cursor-anel, .cursor-ponto {
-  position: fixed;
-  top: 0;
-  left: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 1000;
-  will-change: transform;
-  transition: opacity 200ms ease;
-}
-.cursor-anel {
-  width: 34px;
-  height: 34px;
-  margin: -17px 0 0 -17px;
-  border: 1.5px solid rgb(118 255 3 / 0.75);
-  transition: opacity 200ms ease, width 300ms cubic-bezier(0.16, 1, 0.3, 1), height 300ms cubic-bezier(0.16, 1, 0.3, 1),
-              margin 300ms cubic-bezier(0.16, 1, 0.3, 1), background-color 300ms ease, border-color 300ms ease, scale 200ms ease;
-}
-.cursor-anel.is-ativo {
-  width: 60px;
-  height: 60px;
-  margin: -30px 0 0 -30px;
-  background: rgb(118 255 3 / 0.08);
-  border-color: var(--accent);
-  box-shadow: var(--glow-sm);
-}
-.cursor-anel.is-pressionado { scale: 0.8; }
-.cursor-anel.is-texto { opacity: 0; }
-.cursor-ponto {
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
-  background: var(--accent);
-  box-shadow: var(--glow-sm);
-}
-.cursor-anel.is-oculto, .cursor-ponto.is-oculto { opacity: 0; }
-html.has-cursor, html.has-cursor * { cursor: none !important; }
-html.has-cursor :is(input, textarea, select) { cursor: text !important; }
-
 /* ---------- Brilho que atravessa o botao principal ---------- */
 .btn--primary::before {
   content: "";
@@ -272,6 +232,5 @@ body::before {
 
 @media (prefers-reduced-motion: reduce) {
   body::before { animation: none; }
-  html.has-cursor, html.has-cursor * { cursor: auto !important; }
   .btn--primary::before { display: none; }
 }

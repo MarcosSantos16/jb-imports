@@ -1,6 +1,5 @@
 // Efeitos visuais e interacoes da loja (JavaScript puro, sem dependencias).
 // - Grade de pontos em canvas que reage ao cursor (so desenha quando ha movimento)
-// - Cursor suave com anel que segue o mouse com inercia (apenas mouse)
 // - Botoes magneticos e ondulacao ao clicar
 // - Cards de produto com leve inclinacao 3D
 // - Revelacao ao rolar, indicador deslizante e secao atual no menu
@@ -120,65 +119,6 @@ function iniciarGradeDePontos(canvas) {
 
   montar();
   if (podeAnimar()) acordar();
-}
-
-// ---------- 2. Cursor suave (apenas mouse com ponteiro fino) ----------
-function iniciarCursor() {
-  if (!mouseFino.matches || !podeAnimar()) return;
-
-  const anel = document.createElement('div');
-  anel.className = 'cursor-anel';
-  anel.setAttribute('aria-hidden', 'true');
-  const ponto = document.createElement('div');
-  ponto.className = 'cursor-ponto';
-  ponto.setAttribute('aria-hidden', 'true');
-  document.body.append(anel, ponto);
-  document.documentElement.classList.add('has-cursor');
-
-  let x = -100;
-  let y = -100;
-  let ax = -100;   // posicao suavizada do anel
-  let ay = -100;
-  let rodando = false;
-
-  function frame() {
-    // Interpolacao (lerp): o anel vem atras do cursor com inercia
-    ax += (x - ax) * 0.18;
-    ay += (y - ay) * 0.18;
-    anel.style.transform = `translate3d(${ax}px, ${ay}px, 0)`;
-    ponto.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    if (Math.abs(x - ax) > 0.1 || Math.abs(y - ay) > 0.1) {
-      requestAnimationFrame(frame);
-    } else {
-      rodando = false;
-    }
-  }
-
-  window.addEventListener('pointermove', (e) => {
-    x = e.clientX;
-    y = e.clientY;
-    if (!rodando) { rodando = true; requestAnimationFrame(frame); }
-  }, { passive: true });
-
-  // Anel cresce sobre elementos clicaveis
-  const INTERATIVO = 'a, button, .btn, .chip, summary, .product, .icon-btn';
-  document.addEventListener('pointerover', (e) => {
-    if (e.target.closest && e.target.closest(INTERATIVO)) anel.classList.add('is-ativo');
-  });
-  document.addEventListener('pointerout', (e) => {
-    if (e.target.closest && e.target.closest(INTERATIVO)) anel.classList.remove('is-ativo');
-  });
-  // Em campos de texto o cursor nativo (I-beam) volta e o anel some
-  document.addEventListener('pointerover', (e) => {
-    if (e.target.closest && e.target.closest('input, textarea, select')) anel.classList.add('is-texto');
-  });
-  document.addEventListener('pointerout', (e) => {
-    if (e.target.closest && e.target.closest('input, textarea, select')) anel.classList.remove('is-texto');
-  });
-  document.addEventListener('pointerdown', () => anel.classList.add('is-pressionado'));
-  document.addEventListener('pointerup', () => anel.classList.remove('is-pressionado'));
-  document.addEventListener('pointerleave', () => { anel.classList.add('is-oculto'); ponto.classList.add('is-oculto'); });
-  document.addEventListener('pointerenter', () => { anel.classList.remove('is-oculto'); ponto.classList.remove('is-oculto'); });
 }
 
 // ---------- 3. Botoes magneticos e ondulacao ----------
@@ -356,7 +296,6 @@ function iniciarCabecalho() {
 // ---------- Inicializacao ----------
 const canvas = document.querySelector('.fx-dots');
 if (canvas) iniciarGradeDePontos(canvas);
-iniciarCursor();
 iniciarBotoes();
 iniciarCartoes();
 iniciarRevelacao();

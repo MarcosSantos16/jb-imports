@@ -417,7 +417,7 @@ jb-imports/
 |   |   +-- cart-view.js        # Gaveta do carrinho e fluxo de checkout
 |   |   +-- contact.js          # Formulario de contato (WhatsApp only)
 |   |   +-- main.js             # Inicializador e anuncio a11y de estoque
-|   |   +-- fx.js               # Efeitos: grade de pontos, cursor, botoes magneticos, revelacao ao rolar
+|   |   +-- fx.js               # Efeitos: grade de pontos, botoes magneticos, revelacao ao rolar
 |   |   +-- lib/
 |   |   |   +-- dom.js          # Helpers: h(), icon(), announce(), semAcento()
 |   |   |   +-- firebase.js     # Inicializador lazy do Firebase Web SDK
