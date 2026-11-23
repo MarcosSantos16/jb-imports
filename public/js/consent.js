@@ -1,4 +1,3 @@
-// Consentimento de cookies e carregamento do Google Analytics so apos o aceite.
 import { GA_MEASUREMENT_ID, POLICY_VERSION, isPlaceholder } from './config.js';
 
 const CHAVE = 'jb_consent_v1';

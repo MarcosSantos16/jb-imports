@@ -1,4 +1,3 @@
-// Gera as paginas HTML finais a partir dos modelos em src/templates.
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';

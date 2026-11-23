@@ -1,4 +1,3 @@
-// Gera links de foto otimizados (WebP, largura certa) para o Cloudinary.
 export function urlOtimizada(url, largura) {
   if (typeof url !== 'string') return '';
   const m = url.match(/^(.*\/image\/upload\/)(?:[^/]+\/)?(v\d+\/.*)$/);

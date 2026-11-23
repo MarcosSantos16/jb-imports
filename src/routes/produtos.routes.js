@@ -1,4 +1,3 @@
-// Rotas de produtos do painel administrativo.
 'use strict';
 
 const { Router } = require('express');

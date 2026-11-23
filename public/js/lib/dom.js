@@ -1,4 +1,3 @@
-// Funcoes para criar elementos na pagina sem risco de injecao de HTML.
 export function h(tag, props = {}, ...filhos) {
   const el = document.createElement(tag);
   for (const [chave, valor] of Object.entries(props)) {

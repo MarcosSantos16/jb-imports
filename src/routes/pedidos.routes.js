@@ -1,4 +1,3 @@
-// Rotas publicas e administrativas de pedidos.
 'use strict';
 
 const { Router } = require('express');

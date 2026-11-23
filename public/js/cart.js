@@ -1,4 +1,3 @@
-// Guarda o carrinho no navegador (so ids e quantidades).
 const CHAVE = 'jb_cart_v1';
 const MAX_POR_ITEM = 20;
 

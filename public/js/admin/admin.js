@@ -1,4 +1,3 @@
-// Painel do administrador: login, lista de produtos e pedidos e acoes de estoque.
 import { h, icon, announce } from '../lib/dom.js';
 import { firebaseReady, getApp, loadAuth, loadFirestore } from '../lib/firebase.js';
 import {

@@ -1,4 +1,3 @@
-// Escuta os produtos ativos do Firestore em tempo real.
 import { firebaseReady, getApp, loadFirestore } from './lib/firebase.js';
 
 export function assinarProdutos(aoReceber, aoFalhar) {

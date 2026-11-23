@@ -1,4 +1,3 @@
-// Regras dos produtos: validacao, fotos e estoque.
 'use strict';
 
 const { db, FieldValue } = require('../config/firebase');

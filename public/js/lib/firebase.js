@@ -1,4 +1,3 @@
-// Carrega o Firebase sob demanda: se a CDN cair, o resto da loja continua.
 import { FIREBASE_CONFIG, FIREBASE_SDK_VERSION, isPlaceholder } from '../config.js';
 
 const base = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}`;

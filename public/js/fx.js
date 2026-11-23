@@ -1,4 +1,3 @@
-// Efeitos visuais da loja: fundo de pontos, botoes magneticos e cards com inclinacao.
 const reduzir = window.matchMedia('(prefers-reduced-motion: reduce)');
 const mouseFino = window.matchMedia('(hover: hover) and (pointer: fine)');
 const podeAnimar = () => !reduzir.matches;

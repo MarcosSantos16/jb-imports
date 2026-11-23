@@ -1,4 +1,3 @@
-// Recebe as requisicoes de pedidos e repassa ao servico.
 'use strict';
 
 const service = require('../services/pedidos.service');

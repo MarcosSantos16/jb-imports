@@ -1,4 +1,3 @@
-// Formulario de contato: monta a mensagem e abre o WhatsApp.
 import { waUrl, telefoneValido, formatarTelefone } from './whatsapp.js';
 
 export function iniciarContato() {

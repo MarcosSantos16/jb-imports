@@ -1,4 +1,3 @@
-// Monta o link do WhatsApp e valida o telefone.
 import { WHATSAPP_NUMBER } from './config.js';
 import { formatBRL, CONDICAO_LABEL } from './catalog.js';
 

@@ -1,4 +1,3 @@
-// Configuracoes publicas do site: Firebase, WhatsApp e Google Analytics.
 export const FIREBASE_SDK_VERSION = '10.14.1';
 
 export const FIREBASE_CONFIG = {

@@ -1,4 +1,3 @@
-// Regras dos pedidos: estoque, valores e situacao.
 'use strict';
 
 const { db, FieldValue } = require('../config/firebase');

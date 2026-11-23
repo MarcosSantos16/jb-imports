@@ -1,4 +1,3 @@
-// Inicia o servidor para uso local e para hospedagem Node.js.
 'use strict';
 
 const path = require('path');

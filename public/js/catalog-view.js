@@ -1,4 +1,3 @@
-// Vitrine: filtros, cards, visor de fotos e painel de estoque.
 import { h, icon, semAcento } from './lib/dom.js';
 import { urlOtimizada } from './lib/imagem.js';
 import {

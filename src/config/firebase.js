@@ -1,4 +1,3 @@
-// Conecta o servidor ao Firebase Admin (banco e autenticacao).
 'use strict';
 
 const admin = require('firebase-admin');

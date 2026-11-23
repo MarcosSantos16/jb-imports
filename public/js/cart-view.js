@@ -1,4 +1,3 @@
-// Tela do carrinho e envio do pedido.
 import { h, icon, announce } from './lib/dom.js';
 import { cart } from './cart.js';
 import { formatBRL, CONDICAO_LABEL, disponibilidade } from './catalog.js';

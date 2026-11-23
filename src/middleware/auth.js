@@ -1,4 +1,3 @@
-// Confere se quem chama a API e um administrador autenticado.
 'use strict';
 
 const { auth, db } = require('../config/firebase');

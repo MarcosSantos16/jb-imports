@@ -1,4 +1,3 @@
-// Preenche o Firestore com categorias e produtos de exemplo, inativos.
 'use strict';
 
 const { db, FieldValue } = require('../src/config/firebase');

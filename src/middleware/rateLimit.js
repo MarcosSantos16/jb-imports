@@ -1,4 +1,3 @@
-// Limita requisicoes por IP para reduzir abuso casual.
 'use strict';
 
 const { AppError } = require('./errors');

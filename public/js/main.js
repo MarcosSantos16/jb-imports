@@ -1,4 +1,3 @@
-// Liga os modulos da vitrine quando a pagina carrega.
 import { assinarProdutos } from './store-data.js';
 import { iniciarCatalogo, iniciarPainelEstoque } from './catalog-view.js';
 import { iniciarCarrinho } from './cart-view.js';

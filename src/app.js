@@ -1,4 +1,3 @@
-// Monta o app Express com limites de tamanho e rotas.
 'use strict';
 
 const express = require('express');

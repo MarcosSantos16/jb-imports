@@ -1,4 +1,3 @@
-// Regras do catalogo no servidor (copia espelhada no navegador).
 'use strict';
 
 const CATEGORIAS = [

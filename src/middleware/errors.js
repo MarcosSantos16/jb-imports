@@ -1,4 +1,3 @@
-// Classe de erro padrao da API e tratamento das falhas.
 'use strict';
 
 class AppError extends Error {
