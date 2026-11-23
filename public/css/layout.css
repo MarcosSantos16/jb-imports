@@ -41,16 +41,11 @@
 }
 .brand:hover { color: var(--text); transform: translateX(2px); }
 .brand__mark {
-  width: 30px;
-  height: 30px;
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 2;
-  filter: drop-shadow(0 0 6px rgb(118 255 3 / 0.6));
-  transition: transform 0.6s var(--ease-out);
+  display: block;
+  width: auto;
+  height: 44px;
+  border-radius: 6px;
 }
-.brand:hover .brand__mark { transform: rotate(90deg); }
-.brand__mark circle { fill: var(--accent); stroke: none; }
 .brand__name {
   font-size: 1.25rem;
   font-weight: 800;
